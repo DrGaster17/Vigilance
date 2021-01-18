@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9F75AE68-99E7-423D-AF6D-45B51B5706C7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Vigilance</RootNamespace>
+    <AssemblyName>Vigilance</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.1\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp_publicized">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.1\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandSystem.Core">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\CommandSystem.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DissonanceVoip">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.1\DissonanceVoip.dll</HintPath>
+    </Reference>
+    <Reference Include="Mirror_publicized">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.1\publicized_assemblies\Mirror_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.1\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NorthwoodLib">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\NorthwoodLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.InteropServices">
+      <HintPath>..\..\..\..\System.Runtime.InteropServices\System.Runtime.InteropServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.1\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.1\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="API\Broadcast.cs" />
+    <Compile Include="API\Commands.cs" />
+    <Compile Include="API\Door.cs" />
+    <Compile Include="API\Ghostmode.cs" />
+    <Compile Include="API\Map.cs" />
+    <Compile Include="API\Player.cs" />
+    <Compile Include="API\Room.cs" />
+    <Compile Include="API\Round.cs" />
+    <Compile Include="API\Server.cs" />
+    <Compile Include="API\Version.cs" />
+    <Compile Include="CommandManager.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Environment.cs" />
+    <Compile Include="EventHandlers\EventHandlers.cs" />
+    <Compile Include="EventManager.cs" />
+    <Compile Include="Events\Events.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Patches\Anticheat\PlayerMovementSync_AntiCheatKillPlayer.cs" />
+    <Compile Include="Patches\Anticheat\PlayerMovementSync_AntiFly.cs" />
+    <Compile Include="Patches\Anticheat\PlayerMovementSync_ServerUpdateRealModel.cs" />
+    <Compile Include="Patches\CommandProccessing\CommandProcessor_ProcessQuery.cs" />
+    <Compile Include="Patches\Events\AlphaWarheadController_Detonate.cs" />
+    <Compile Include="Patches\Events\AnimationController_CallCmdSyncData.cs" />
+    <Compile Include="Patches\Events\CharacterClassManager_ApplyProperties.cs" />
+    <Compile Include="Patches\Events\CharacterClassManager_CallCmdRegisterEscape.cs" />
+    <Compile Include="Patches\Events\CharacterClassManager_ForceRoundStart.cs" />
+    <Compile Include="Patches\Events\CharacterClassManager_SetPlayersClass.cs" />
+    <Compile Include="Patches\Events\CheaterReport_CallCmdReport.cs" />
+    <Compile Include="Patches\Events\ConsumableAndWearableItems_CallCmdCancelMedicalItem.cs" />
+    <Compile Include="Patches\Events\ConsumableAndWearableItems_CallCmdUseMedicalItem.cs" />
+    <Compile Include="Patches\Events\Generator079_Interact.cs" />
+    <Compile Include="Patches\Events\GrenadeManager_CallCmdThrowGrenade.cs" />
+    <Compile Include="Patches\Events\Handcuffs_CallCmdCuffTarget.cs" />
+    <Compile Include="Patches\Events\Handcuffs_CallCmdFreeTeammate.cs" />
+    <Compile Include="Patches\Events\Handcuffs_ClearTarget.cs" />
+    <Compile Include="Patches\Events\Intercom_CallCmdSetTransmit.cs" />
+    <Compile Include="Patches\Events\Inventory_CallCmdDropItem.cs" />
+    <Compile Include="Patches\Events\ItemSearchCompletor_Complete.cs" />
+    <Compile Include="Patches\Events\NicknameSync_SetNick.cs" />
+    <Compile Include="Patches\Events\NineTailedFoxNamingRule_PlayEntranceAnnouncement.cs" />
+    <Compile Include="Patches\Events\NineTailedFoxAnnouncer_AnnounceScpTermination.cs" />
+    <Compile Include="Patches\Events\BanPlayer_BanUser.cs" />
+    <Compile Include="Patches\Events\Generator079_CheckFinish.cs" />
+    <Compile Include="Patches\Events\DecontaminationController_FinishDecontamination.cs" />
+    <Compile Include="Patches\Events\CharacterClassManager_RpcPlaceBlood.cs" />
+    <Compile Include="Patches\Events\PlayerInteract_CallCmdChange914Knob.cs" />
+    <Compile Include="Patches\Events\PlayerInteract_CallCmdContain106.cs" />
+    <Compile Include="Patches\Events\PlayerInteract_CallCmdDetonateWarhead.cs" />
+    <Compile Include="Patches\Events\DoorVariant_ServerInteract.cs" />
+    <Compile Include="Patches\Events\PlayerInteract_CallCmdUse914.cs" />
+    <Compile Include="Patches\Events\PlayerInteract_CallCmdUseElevator.cs" />
+    <Compile Include="Patches\Events\PlayerInteract_CallCmdUseLocker.cs" />
+    <Compile Include="Patches\Events\PlayerInteract_CallCmdUsePanel.cs" />
+    <Compile Include="Patches\Events\PlayerInteract_OnInteract.cs" />
+    <Compile Include="Patches\Events\PlayerStats_Roundrestart.cs" />
+    <Compile Include="Patches\Events\PocketDimensionTeleport_OnTriggerEnter.cs" />
+    <Compile Include="Patches\Events\RagdollManager_SpawnRagdoll.cs" />
+    <Compile Include="Patches\Events\ReferenceHub_OnDestroy.cs" />
+    <Compile Include="Patches\Events\RespawnManager_Spawn.cs" />
+    <Compile Include="Patches\Events\RoundSummary_Start.cs" />
+    <Compile Include="Patches\Events\Scp049_BodyCmd_ByteAndGameObject.cs" />
+    <Compile Include="Patches\Events\Scp079PlayerScript_CallCmdInteract.cs" />
+    <Compile Include="Patches\Events\Scp079PlayerScript_CallRpcGainExp.cs" />
+    <Compile Include="Patches\Events\Scp079PlayerScript_TargetLevelChanged.cs" />
+    <Compile Include="Patches\Events\Scp096_AddTarget.cs" />
+    <Compile Include="Patches\Events\Scp096_Enrage.cs" />
+    <Compile Include="Patches\Events\Scp106PlayerScript_CallCmdMakePortal.cs" />
+    <Compile Include="Patches\Events\Scp106PlayerScript_CallCmdMovePlayer.cs" />
+    <Compile Include="Patches\Events\Scp106PlayerScript_CallCmdUsePortal.cs" />
+    <Compile Include="Patches\Events\Scp914Machine_ProcessItems.cs" />
+    <Compile Include="Patches\Events\Scp914Machine_UpgradeItemID.cs" />
+    <Compile Include="Patches\Events\SeedSynchronizer_Start.cs" />
+    <Compile Include="Patches\Events\ServerConsole_AddLog.cs" />
+    <Compile Include="Patches\Events\TeslaGate_PlayerInRange.cs" />
+    <Compile Include="Patches\Events\WeaponManager_CallCmdReload.cs" />
+    <Compile Include="Patches\Events\WeaponManager_CallCmdShoot.cs" />
+    <Compile Include="Patches\Events\WeaponManager_RpcPlaceDecal.cs" />
+    <Compile Include="Patches\Events\PlayerStats_HurtPlayer.cs" />
+    <Compile Include="Patches\Events\CharacterClassManager_AllowContain.cs" />
+    <Compile Include="Patches\Events\ServerRoles_SetGroup.cs" />
+    <Compile Include="Patches\Events\PlayerInteract_CallCmdSwitchAWButton.cs" />
+    <Compile Include="Patches\Features\FallDamage_OnTouchdown.cs" />
+    <Compile Include="Patches\Features\Pickup_UpdatePosition.cs" />
+    <Compile Include="Patches\Features\Scp049_OnEnable.cs" />
+    <Compile Include="Patches\Features\DissonanceUserSetup_CallCmdAltIsActive.cs" />
+    <Compile Include="Patches\Features\Intercom_Start.cs" />
+    <Compile Include="Patches\Features\Intercom_UpdateText.cs" />
+    <Compile Include="Patches\Features\Lift_UseLift.cs" />
+    <Compile Include="Patches\Features\MicroHID_UpdateServerside.cs" />
+    <Compile Include="Patches\Features\Radio_UseBattery.cs" />
+    <Compile Include="Patches\Features\Scp096Target_Start.cs" />
+    <Compile Include="Patches\Features\Scp096_ChargeDoor.cs" />
+    <Compile Include="Patches\Features\Scp096_ChargePlayer.cs" />
+    <Compile Include="Patches\Features\Scp096_get_MaxShield.cs" />
+    <Compile Include="Patches\Features\Scp096_OnEnable.cs" />
+    <Compile Include="Patches\Features\Scp096_PryGate.cs" />
+    <Compile Include="Patches\Features\Scp096_SetupShield.cs" />
+    <Compile Include="Patches\Features\Scp096Target_set_IsTarget.cs" />
+    <Compile Include="Patches\Features\Scp173PlayerScript_Blink.cs" />
+    <Compile Include="Patches\Features\Scp173PlayerScript_FixedUpdate.cs" />
+    <Compile Include="Patches\Features\Scp939PlayerScript_CallCmdShoot.cs" />
+    <Compile Include="Patches\Features\ServerConsole_ReloadServerName.cs" />
+    <Compile Include="Patches\Features\Stamina_ProcessStamina.cs" />
+    <Compile Include="Patches\Features\WeaponManager_GetShootPermission.cs" />
+    <Compile Include="Patches\Fixes\CharacterClassManager_set_NetworkCurClass.cs" />
+    <Compile Include="Patches\Fixes\CharacterClassManager_Start.cs" />
+    <Compile Include="Patches\Ghostmode\PlayerPositionManager_TransmitData.cs" />
+    <Compile Include="Paths.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="PluginManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerGuard.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConfigManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Patches\Events\Generator079_OpenClose.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Patches\Events\Scp096_EndEnrage.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
