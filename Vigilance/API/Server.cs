@@ -23,7 +23,16 @@ namespace Vigilance.API
         public static string Name { get => ServerConsole._serverName; set => ServerConsole._serverName = value; }
         public static string IpAddress { get => ServerConsole.Ip; set => ServerConsole.Ip = value; }
 
-        public static void Restart(bool safeRestart = true) => Patches.Events.Restart.ServerRestart();
+        public static void Restart(bool safeRestart = true)
+        {
+            if (safeRestart)
+            {
+                Environment.Cache.LocalStats.Roundrestart();
+                Timing.CallDelayed(1f, () => Application.Quit());
+            }
+            else
+                Application.Quit();
+        }
 
         public static bool Ban(Player player, int duration)
         {

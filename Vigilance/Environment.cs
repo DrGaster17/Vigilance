@@ -986,7 +986,6 @@ namespace Vigilance
                 CameraExtensions.SetInfo();
                 Map.RefreshDoors();
                 Cache.CollectGarbage();
-                Patches.Events.Restart.RestartMessageShown = false;
             }
             catch (Exception e)
             {

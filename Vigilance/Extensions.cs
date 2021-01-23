@@ -6,8 +6,11 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Vigilance.API;
-using Harmony;
+using Scp914;
 using Interactables.Interobjects.DoorUtils;
+using Dissonance.Integrations.MirrorIgnorance;
+using Interactables.Interobjects;
+using Respawning;
 
 namespace Vigilance.Extensions
 {
@@ -195,6 +198,7 @@ namespace Vigilance.Extensions
 			Player player = hitInfo.RHub.GetPlayer();
 			if (player == null)
 				player = Server.PlayerList.Local;
+			
 			return player;
 		}
 
@@ -1443,28 +1447,19 @@ namespace Vigilance.Extensions.Rpc
 	public static class RpcExtensions
     {
 		public static void RpcWarheadShake(this Player player, bool achieve = true)
-        {
-			AlphaWarheadController controller = player.GetComponent<AlphaWarheadController>();
-			controller = controller == null ? AlphaWarheadController.Host : controller;
-			if (controller != null)
-            {
-				NetworkWriter writer = NetworkWriterPool.GetWriter();
-				writer.WriteBoolean(achieve);
-				controller.SendRPCInternal(typeof(AlphaWarheadController), "RpcShake", writer, 0);
-				NetworkWriterPool.Recycle(writer);
-			}
-        }
+		{
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteBoolean(achieve);
+			player.Hub.characterClassManager.SendRPCInternal(typeof(AlphaWarheadController), "RpcShake", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
 
 		public static void RpcPlaySound(this Player player, int soundId)
-        {
-			AmbientSoundPlayer ambient = player.GetComponent<AmbientSoundPlayer>();
-			if (ambient != null)
-            {
-				NetworkWriter writer = NetworkWriterPool.GetWriter();
-				writer.WritePackedInt32(soundId);
-				ambient.SendRPCInternal(typeof(AmbientSoundPlayer), "RpcPlaySound", writer, 0);
-				NetworkWriterPool.Recycle(writer);
-			}
+		{
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WritePackedInt32(soundId);
+			player.Hub.characterClassManager.SendRPCInternal(typeof(AmbientSoundPlayer), "RpcPlaySound", writer, 0);
+			NetworkWriterPool.Recycle(writer);
 		}
 
 
@@ -1495,50 +1490,289 @@ namespace Vigilance.Extensions.Rpc
 		}
 
 		public static void RpcFalldamageSound(this Player player)
-        {
-			FallDamage fallDamage = player.GetComponent<FallDamage>();
-			if (fallDamage != null)
-            {
-				NetworkWriter writer = NetworkWriterPool.GetWriter();
-				fallDamage.SendRPCInternal(typeof(FallDamage), "RpcDoSound", writer, 0);
-				NetworkWriterPool.Recycle(writer);
-			}
-        }
+		{
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.SendRPCInternal(typeof(FallDamage), "RpcDoSound", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
 
 		public static void RpcAchieve(this Player player)
-        {
-			FallDamage fallDamage = player.GetComponent<FallDamage>();
-			if (fallDamage != null)
-            {
-				NetworkWriter writer = NetworkWriterPool.GetWriter();
-				fallDamage.SendTargetRPCInternal(player.Connection, typeof(FallDamage), "TargetAchieve", writer, 0);
-				NetworkWriterPool.Recycle(writer);
-			}
-        }
+		{
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.SendTargetRPCInternal(player.Connection, typeof(FallDamage), "TargetAchieve", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
 
 		public static void RpcFlickerLights(this Player player, float duration)
-        {
-			FlickerableLightController cntrl = player.GetComponent<FlickerableLightController>();
-			if (cntrl != null)
-            {
-				NetworkWriter writer = NetworkWriterPool.GetWriter();
-				writer.WriteSingle(duration);
-				cntrl.SendRPCInternal(typeof(FlickerableLightController), "RpcFlickerLights", writer, 0);
-				NetworkWriterPool.Recycle(writer);
-			}
-        }
+		{
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteSingle(duration);
+			player.Hub.characterClassManager.SendRPCInternal(typeof(FlickerableLightController), "RpcFlickerLights", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
 
 		public static void RpcIntercomSound(this Player player, bool start, int transmitterID)
+		{
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteBoolean(start);
+			writer.WritePackedInt32(transmitterID);
+			player.Hub.characterClassManager.SendRPCInternal(typeof(Intercom), "RpcPlaySound", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcLiftMusic(this Player player)
         {
-			Intercom icom = player.GetComponent<Intercom>();
-			if (icom != null)
-            {
-				NetworkWriter writer = NetworkWriterPool.GetWriter();
-				writer.WriteBoolean(start);
-				writer.WritePackedInt32(transmitterID);
-				icom.SendRPCInternal(typeof(Intercom), "RpcPlaySound", writer, 0);
-				NetworkWriterPool.Recycle(writer);
-			}
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.SendRPCInternal(typeof(Lift), "RpcPlayMusic", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcLockerSound(this Player player, int chamber, int locker, bool open)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WritePackedInt32(locker);
+			writer.WritePackedInt32(chamber);
+			writer.WriteBoolean(open);
+			player.Hub.characterClassManager.SendRPCInternal(typeof(LockerManager), "RpcDoSound", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcHidHitmarker(this Player player, bool achievement)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteBoolean(achievement);
+			player.Hub.characterClassManager.SendTargetRPCInternal(null, typeof(MicroHID), "TargetSendHitmarker", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcForcePosition(this Player player, Vector3 pos)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteVector3(pos);
+			player.Hub.playerMovementSync.SendTargetRPCInternal(player.Connection, typeof(PlayerMovementSync), "TargetForcePosition", writer, 1);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcSinkholeSlow(this Player player, float slowAmount)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteSingle(slowAmount);
+			player.Hub.playerMovementSync.SendTargetRPCInternal(player.Connection, typeof(PlayerMovementSync), "TargetForceUpdateSinkholeSlow", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcSetRotation(this Player player, float rotation)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteSingle(rotation);
+			player.Hub.playerMovementSync.SendTargetRPCInternal(player.Connection, typeof(PlayerMovementSync), "TargetSetRotation", writer, 1);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcFastRestart(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.playerStats.SendRPCInternal(typeof(PlayerStats), "RpcFastRestart", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcRoundRestart(this Player player, float connectionDelay, bool reconnect)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteSingle(connectionDelay);
+			writer.WriteBoolean(reconnect);
+			player.Hub.playerStats.SendRPCInternal(typeof(PlayerStats), "RpcRoundrestart", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcRedirect(this Player player, float connectionDelay, ushort port)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteSingle(connectionDelay);
+			writer.WriteUInt16(port);
+			player.Hub.playerStats.SendRPCInternal(typeof(PlayerStats), "RpcRoundrestartRedirect", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcAchievement(this Player player, string achievement)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteString(achievement);
+			player.Hub.playerStats.SendTargetRPCInternal(player.Connection, typeof(PlayerStats), "TargetAchieve", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcAchivementStatus(this Player player, string key, string achivement, int maxValue)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteString(key);
+			writer.WriteString(achivement);
+			writer.WritePackedInt32(maxValue);
+			player.Hub.playerStats.SendTargetRPCInternal(player.Connection, typeof(PlayerStats), "TargetStats", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcBloodEffect(this Player player, Vector3 pos, float overall)
+		{
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteVector3(pos);
+			writer.WriteSingle(overall);
+			player.Hub.playerStats.SendTargetRPCInternal(player.Connection, typeof(PlayerStats), "TargetBloodEffect", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcSyncHealth(this Player player, float health)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteSingle(health);
+			player.Hub.playerStats.SendTargetRPCInternal(player.Connection, typeof(PlayerStats), "TargetSyncHp", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void Rpc0492DamageAnimation(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.Scp0492.SendRPCInternal(typeof(Scp049_2PlayerScript), "RpcShootAnim", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void Rpc079GainExp(this Player player, ExpGainType type, RoleType role)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WritePackedInt32((int)type);
+			writer.WriteSByte((sbyte)role);
+			player.Hub.scp079PlayerScript.SendRPCInternal(typeof(Scp079PlayerScript), "RpcGainExp", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void Rpc079NotEnoughMana(this Player player, float current, float needed)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteSingle(needed);
+			writer.WriteSingle(current);
+			player.Hub.scp079PlayerScript.SendRPCInternal(typeof(Scp079PlayerScript), "RpcNotEnoughMana", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void Rpc106ContainAnimation(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.Scp106.SendRPCInternal(typeof(Scp106PlayerScript), "RpcContainAnimation", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void Rpc106TeleportAnimation(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.Scp106.SendRPCInternal(typeof(Scp106PlayerScript), "RpcTeleportAnimation", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void Rpc173BlinkTime(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.Scp173.SendRPCInternal(typeof(Scp173PlayerScript), "RpcBlinkTime", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void Rpc173SyncAudio(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.Scp173.SendRPCInternal(typeof(Scp173PlayerScript), "RpcSyncAudio", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void Rpc939Damage(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.Scp939.SendRPCInternal(typeof(Scp939PlayerScript), "RpcShoot", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcEmptyClip(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.weaponManager.SendRPCInternal(typeof(WeaponManager), "RpcEmptyClip", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcConfirmShot(this Player player, bool hitmarker)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteBoolean(hitmarker);
+			writer.WritePackedInt32(player.Hub.weaponManager.curWeapon);
+			player.Hub.weaponManager.SendRPCInternal(typeof(WeaponManager), "RpcConfirmShot", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcReloadWeapon(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteSByte(player.Hub.weaponManager.curWeapon);
+			player.Hub.weaponManager.SendRPCInternal(typeof(WeaponManager), "RpcReload", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcSetName(this Player player, string name)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteString(name);
+			player.Hub.characterClassManager.SendRPCInternal(typeof(MirrorIgnorancePlayer), "RpcSetPlayerName", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcDoorBeepSound(this Player player, bool denied)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteBoolean(denied);
+			player.Hub.characterClassManager.SendRPCInternal(typeof(BasicDoor), "RpcPlayBeepSound", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcCheckpointBeepSound(this Player player, CheckpointDeniedType deniedType)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteByte((byte)deniedType);
+			player.Hub.characterClassManager.SendRPCInternal(typeof(CheckpointDoor), "RpcPlayBeepSound", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcAlarm(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.SendRPCInternal(typeof(AirlockController), "RpcAlarm", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcPryGate(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			player.Hub.characterClassManager.SendRPCInternal(typeof(PryableDoor), "RpcPryGate", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void RpcCassieAnnouncement(this Player player, string words, bool hold, bool noise)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteString(words);
+			writer.WriteBoolean(hold);
+			writer.WriteBoolean(noise);
+			player.Hub.characterClassManager.SendRPCInternal(typeof(RespawnEffectsController), "RpcCassieAnnouncement", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public static void Rpc914Activate(this Player player)
+        {
+			NetworkWriter writer = NetworkWriterPool.GetWriter();
+			writer.WriteDouble(Time.time);
+			player.Hub.characterClassManager.SendRPCInternal(typeof(Scp914Machine), "RpcActivate", writer, 0);
+			NetworkWriterPool.Recycle(writer);
+		}
+
+		public enum CheckpointDeniedType : byte
+        {
+			Denied = 0,
+			Allowed = 1
         }
-    }
+	}
 }
