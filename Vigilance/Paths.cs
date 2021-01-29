@@ -21,7 +21,8 @@ namespace Vigilance
 		public static string ConfigPath => $"{ConfigsPath}/{Server.Port}.yml";
 		public static string ConfigsPath => $"{Vigilance}/Configs";
 		public static string PluginConfigsPath => $"{ConfigsPath}/Plugins/{Server.Port}";
-		public static string HarmonyDownloadURL => "https://github.com/DrGaster17/Vigilance/releases/download/v4.1.2/0Harmony.dll";
+		public static string HarmonyDownloadURL => "https://github.com/DrGaster17/Vigilance/releases/download/v5.5.4/0Harmony.dll";
+		public static string NewtonsoftDownloadURL => "https://github.com/DrGaster17/Vigilance/releases/download/v5.5.4/Newtonsoft.Json.dll";
 
 		public static DirectoryInfo Create(string directory)
 		{
@@ -87,7 +88,6 @@ namespace Vigilance
 
 		public static void CheckDirectories()
 		{
-			Log.Add("Paths", "Checking directories", LogType.Debug);
 			Check(SCPSL_Data);
 			Check(Managed);
 			Check(Vigilance);
@@ -170,14 +170,14 @@ namespace Vigilance
         {
 			if (!File.Exists(HarmonyFile))
             {
-				Log.Add("Paths", "Downloading Harmony", LogType.Info);
+				Log.Add("Paths", "Downloading 0Harmony.dll", LogType.Info);
 				Download(HarmonyDownloadURL, HarmonyFile);
             }
 
 			if (!File.Exists(NewtonsoftJson))
             {
-				Log.Add("Paths", "Downloading Newtonsoft.Json", LogType.Info);
-				Download("https://github.com/DrGaster17/Vigilance/releases/download/v4.1.6/Newtonsoft.Json.dll", NewtonsoftJson);
+				Log.Add("Paths", "Downloading Newtonsoft.Json.dll", LogType.Info);
+				Download(NewtonsoftDownloadURL, NewtonsoftJson);
             }
         }
 
