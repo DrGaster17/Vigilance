@@ -1541,7 +1541,7 @@ namespace Vigilance.Extensions.Rpc
         {
 			NetworkWriter writer = NetworkWriterPool.GetWriter();
 			writer.WriteBoolean(achievement);
-			player.Hub.characterClassManager.SendTargetRPCInternal(null, typeof(MicroHID), "TargetSendHitmarker", writer, 0);
+			player.Hub.characterClassManager.SendTargetRPCInternal(player.Connection, typeof(MicroHID), "TargetSendHitmarker", writer, 0);
 			NetworkWriterPool.Recycle(writer);
 		}
 
