@@ -268,6 +268,7 @@ namespace Vigilance
 			if (!name.EndsWith(".dll"))
 				name += ".dll";
 			string path = $"{Dependencies}/{name}";
+			Download(url, path);
 			if (!PluginManager.Dependencies.ContainsKey(path))
 			{
 				if (path.EndsWith(".dll"))
