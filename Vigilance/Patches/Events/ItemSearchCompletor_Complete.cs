@@ -15,7 +15,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(__instance.Hub);
                 if (player == null)
                     return true;
-                Environment.OnPickupItem(__instance.TargetPickup, player, true, out bool allow);
+                Vigilance.Utilities.Handling.OnPickupItem(__instance.TargetPickup, player, true, out bool allow);
                 return allow;
             }
             catch (Exception e)

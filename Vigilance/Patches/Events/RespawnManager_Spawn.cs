@@ -35,7 +35,7 @@ namespace Vigilance.Patches.Events
                     RespawnTickets.Singleton.GrantTickets(RespawnTickets.DefaultTeam, RespawnTickets.DefaultTeamAmount, true);
                 }
                 int num2 = Mathf.Min(num, spawnableTeam.MaxWaveSize);
-                Environment.OnTeamRespawn(list.Select(h => h.gameObject).ToList(), __instance.NextKnownTeam, true, out __instance.NextKnownTeam, out bool allow);
+                Vigilance.Utilities.Handling.OnTeamRespawn(list.Select(h => h.gameObject).ToList(), __instance.NextKnownTeam, true, out __instance.NextKnownTeam, out bool allow);
                 if (!allow)
                     return false;
                 while (list.Count > num2)

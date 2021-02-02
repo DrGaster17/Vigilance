@@ -24,7 +24,7 @@ namespace Vigilance.Patches.Events
                         attacker = ply;
                 if (attacker == null)
                     return true;
-                Environment.OnAnnounceSCPTermination(attacker, scp, hit, string.IsNullOrEmpty(hit.Attacker) ? "NONE" : hit.Attacker, true, out bool allow);
+                Vigilance.Utilities.Handling.OnAnnounceSCPTermination(attacker, scp, hit, string.IsNullOrEmpty(hit.Attacker) ? "NONE" : hit.Attacker, true, out bool allow);
                 if (!allow)
                     return false;
                 if (NineTailedFoxAnnouncer.singleton == null)

@@ -20,7 +20,7 @@ namespace Vigilance.Patches.Events
                         return true;
                     if (ply.CufferId == myPlayer.PlayerId)
                     {
-                        Environment.OnUncuff(ply, myPlayer, true, out bool allow);
+                        Vigilance.Utilities.Handling.OnUncuff(ply, myPlayer, true, out bool allow);
                         if (allow)
                             ply.CufferId = -1;
                     }

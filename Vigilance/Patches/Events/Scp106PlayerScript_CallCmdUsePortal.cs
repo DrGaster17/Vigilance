@@ -22,7 +22,7 @@ namespace Vigilance.Patches.Events
                     return true;
                 if (__instance.iAm106 && __instance.portalPosition != Vector3.zero && !__instance.goingViaThePortal)
                 {
-                    Environment.OnSCP106Teleport(player, player.Position, __instance.portalPosition, true, out Vector3 other, out bool allow);
+                    Vigilance.Utilities.Handling.OnSCP106Teleport(player, player.Position, __instance.portalPosition, true, out Vector3 other, out bool allow);
                     if (allow)
                         Timing.RunCoroutine(__instance._DoTeleportAnimation(), Segment.Update);
                 }

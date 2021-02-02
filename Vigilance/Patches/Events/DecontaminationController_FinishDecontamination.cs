@@ -16,7 +16,7 @@ namespace Vigilance.Patches.Events
         {
             try
             {
-				Environment.OnDecontamination(true, out bool allow);
+				Vigilance.Utilities.Handling.OnDecontamination(true, out bool allow);
 				if (!allow)
 					return false;
 				if (NetworkServer.active)

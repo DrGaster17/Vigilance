@@ -44,7 +44,7 @@ namespace Vigilance.Patches.Events
                         string originalName = string.IsNullOrEmpty(targetPlayer.Nick) ? "(no nick)" : targetPlayer.Nick;
                         long issuanceTime = TimeBehaviour.CurrentTimestamp();
                         long banExpieryTime = TimeBehaviour.GetBanExpirationTime((uint)duration);
-                        Environment.OnBan(issuerPlayer, targetPlayer, reason, issuanceTime, banExpieryTime, true, out banExpieryTime, out bool allow);
+                        Vigilance.Utilities.Handling.OnBan(issuerPlayer, targetPlayer, reason, issuanceTime, banExpieryTime, true, out banExpieryTime, out bool allow);
                         if (!allow)
                             return false;
                         try

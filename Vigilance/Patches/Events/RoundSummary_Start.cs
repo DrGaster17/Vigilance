@@ -99,7 +99,7 @@ namespace Vigilance.Patches.Events
                     ev.LeadingTeam = RoundSummary.escaped_ds != 0 ? RoundSummary.LeadingTeam.ChaosInsurgency : RoundSummary.LeadingTeam.Anomalies;
                 }
 
-                Environment.OnCheckRoundEnd(ev, out CheckRoundEndEvent checkRoundEndEvent);
+                Vigilance.Utilities.Handling.OnCheckRoundEnd(ev, out CheckRoundEndEvent checkRoundEndEvent);
                 roundSummary._roundEnded = checkRoundEndEvent.Allow;
 
                 if (roundSummary._roundEnded)
@@ -115,10 +115,10 @@ namespace Vigilance.Patches.Events
                     if (roundSummary != null)
                     {
                         newList.scps_except_zombies -= newList.zombies;
-                        Environment.OnRoundEnd(checkRoundEndEvent.LeadingTeam, newList, timeToRoundRestart, true, out timeToRoundRestart, out RoundSummary.SumInfo_ClassList classListEnd, out bool allow);
+                        Vigilance.Utilities.Handling.OnRoundEnd(checkRoundEndEvent.LeadingTeam, newList, timeToRoundRestart, true, out timeToRoundRestart, out RoundSummary.SumInfo_ClassList classListEnd, out bool allow);
                         if (!allow)
                             yield return 0.0f;
-                        Environment.OnShowSummary(Round.Info.ClassListOnStart, classListEnd, checkRoundEndEvent.LeadingTeam, true, out bool all);
+                        Vigilance.Utilities.Handling.OnShowSummary(Round.Info.ClassListOnStart, classListEnd, checkRoundEndEvent.LeadingTeam, true, out bool all);
                         if (!all)
                             yield return 0.0f;
                         roundSummary.RpcShowRoundSummary(roundSummary.classlistStart, classListEnd, checkRoundEndEvent.LeadingTeam, RoundSummary.escaped_ds, RoundSummary.escaped_scientists, RoundSummary.kills_by_scp, timeToRoundRestart);

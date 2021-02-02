@@ -22,7 +22,7 @@ namespace Vigilance.Patches.Events
                 string u = args[0];
                 int n = int.Parse(args[1]);
                 StringBuilder stringBuilder = StringBuilderPool.Shared.Rent();
-                Environment.OnAnnounceNTFEntrace(num, u, n, true, out num, out string unit, out int number, out bool allow);
+                Vigilance.Utilities.Handling.OnAnnounceNTFEntrace(num, u, n, true, out num, out string unit, out int number, out bool allow);
                 cassieUnitName = $"{unit}-{number}";
                 if (!allow)
                     return false;

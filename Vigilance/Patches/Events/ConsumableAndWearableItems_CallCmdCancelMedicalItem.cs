@@ -16,7 +16,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(__instance._hub);
                 if (player == null)
                     return true;
-                Environment.OnCancelMedical(__instance.cooldown, player, __instance._hub.inventory.curItem, true, out __instance.cooldown, out bool allow);
+                Vigilance.Utilities.Handling.OnCancelMedical(__instance.cooldown, player, __instance._hub.inventory.curItem, true, out __instance.cooldown, out bool allow);
                 if (!allow)
                     return false;
                 foreach (ConsumableAndWearableItems.UsableItem usableItem in __instance.usableItems)

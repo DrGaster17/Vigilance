@@ -27,7 +27,7 @@ namespace Vigilance.Patches.Events
                     return false;
                 if (!__instance.CanReceiveTargets || __instance._targets.Contains(player.Hub))
                     return false;
-                Environment.OnScp096AddTarget(myPlayer, player, true, out bool allow);
+                Vigilance.Utilities.Handling.OnScp096AddTarget(myPlayer, player, true, out bool allow);
                 if (!allow)
                     return false;
                 if (!__instance._targets.IsEmpty() || __instance.Enraged)

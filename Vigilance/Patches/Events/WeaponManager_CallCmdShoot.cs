@@ -14,19 +14,13 @@ namespace Vigilance.Patches.Events
             try
             {
 				Player player = Server.PlayerList.GetPlayer(__instance._hub);
-				if (player == null)
-					return true;
-				if (!__instance._iawRateLimit.CanExecute(true))
-					return false;
+				if (player == null) return true;
+				if (!__instance._iawRateLimit.CanExecute(true)) return false;
 				int itemIndex = __instance._hub.inventory.GetItemIndex();
-				if (itemIndex < 0 || itemIndex >= __instance._hub.inventory.items.Count)
-					return false;
-				if (__instance.curWeapon < 0 || ((__instance._reloadCooldown > 0f || __instance._fireCooldown > 0f) && !__instance.isLocalPlayer))
-					return false;
-				if (__instance._hub.inventory.curItem != __instance.weapons[__instance.curWeapon].inventoryID)
-					return false;
-				if (__instance._hub.inventory.items[itemIndex].durability <= 0f)
-					return false;
+				if (itemIndex < 0 || itemIndex >= __instance._hub.inventory.items.Count) return false;
+				if (__instance.curWeapon < 0 || ((__instance._reloadCooldown > 0f || __instance._fireCooldown > 0f) && !__instance.isLocalPlayer)) return false;
+				if (__instance._hub.inventory.curItem != __instance.weapons[__instance.curWeapon].inventoryID) return false;
+				if (__instance._hub.inventory.items[itemIndex].durability <= 0f) return false;
 
 				if (Vector3.Distance(__instance._hub.playerMovementSync.RealModelPosition, sourcePos) > 5.5f)
 				{
@@ -46,7 +40,7 @@ namespace Vigilance.Patches.Events
 					return false;
 				}
 
-				Environment.OnShoot(player, target, player.ItemInHand.GetWeaponType(), true, dir, sourcePos, targetPos, hitboxType, out bool allow);
+				Vigilance.Utilities.Handling.OnShoot(player, target, player.ItemInHand.GetWeaponType(), true, dir, sourcePos, targetPos, hitboxType, out bool allow);
 				if (!allow)
 					return false;
 				__instance._hub.inventory.items.ModifyDuration(itemIndex, __instance._hub.inventory.items[itemIndex].durability - 1f);
@@ -226,7 +220,7 @@ namespace Vigilance.Patches.Events
 						}
 					}
 				IL_7D3:
-					Environment.OnLateShoot(player, target, player.ItemInHand.GetWeaponType(), true, out bool allow2);
+					Vigilance.Utilities.Handling.OnLateShoot(player, target, player.ItemInHand.GetWeaponType(), true, out bool allow2);
 					if (!allow2)
 						return false;
 					num5 *= __instance.weapons[__instance.curWeapon].allEffects.damageMultiplier;

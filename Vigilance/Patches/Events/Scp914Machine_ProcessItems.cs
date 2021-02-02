@@ -14,8 +14,6 @@ namespace Vigilance.Patches.Events
         {
             try
             {
-                if (!NetworkServer.active)
-                    return false;
                 Collider[] array = Physics.OverlapBox(__instance.intake.position, __instance.inputSize / 2f);
                 __instance.players.Clear();
                 __instance.items.Clear();
@@ -33,7 +31,7 @@ namespace Vigilance.Patches.Events
                             __instance.items.Add(component2);
                     }
                 }
-                Environment.OnSCP914Ugrade(__instance.players, __instance.items, __instance.knobState, true, out __instance.knobState, out bool allow);
+                Vigilance.Utilities.Handling.OnSCP914Ugrade(__instance.players, __instance.items, __instance.knobState, true, out __instance.knobState, out bool allow);
                 if (!allow)
                     return false;
                 foreach (CharacterClassManager ccm in __instance.players)
@@ -41,7 +39,7 @@ namespace Vigilance.Patches.Events
                     Player player = Server.PlayerList.GetPlayer(ccm._hub);
                     if (player != null)
                     {
-                        Environment.OnScp914UpgradePlayer(player, true, out bool allow2);
+                        Vigilance.Utilities.Handling.OnScp914UpgradePlayer(player, true, out bool allow2);
                         if (!allow2)
                             return false;
                     }

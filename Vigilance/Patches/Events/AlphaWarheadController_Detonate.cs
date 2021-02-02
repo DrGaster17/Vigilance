@@ -44,7 +44,7 @@ namespace Vigilance.Patches.Events
 					doorNametagExtension.TargetDoor.ServerChangeLock(DoorLockReason.SpecialDoorFeature, true);
 					doorNametagExtension.TargetDoor.NetworkTargetState = true;
 				}
-				Environment.OnWarheadDetonate();
+				Vigilance.Utilities.Handling.OnWarheadDetonate();
 				return true;
             }
             catch (Exception e)

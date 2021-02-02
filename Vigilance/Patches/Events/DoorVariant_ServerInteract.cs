@@ -31,7 +31,7 @@ namespace Vigilance.Patches.Events
                 {
 					if (door.IsAllowed(player, true, colliderId) || ply.characterClassManager.CurClass == RoleType.Scp079)
                     {
-						Environment.OnDoorInteract(true, door, player, out bool allow);
+						Vigilance.Utilities.Handling.OnDoorInteract(true, door, player, out bool allow);
 						if (!allow)
 							return false;
 						door.ChangeState();
@@ -44,7 +44,7 @@ namespace Vigilance.Patches.Events
 				{
 					if (ply.characterClassManager.CurClass == RoleType.Scp079 || door.IsAllowed(player, false, colliderId))
 					{
-						Environment.OnDoorInteract(true, door, player, out bool allow);
+						Vigilance.Utilities.Handling.OnDoorInteract(true, door, player, out bool allow);
 						if (!allow)
 							return false;
 						__instance.NetworkTargetState = !__instance.TargetState;

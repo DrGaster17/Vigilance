@@ -22,7 +22,7 @@ namespace Vigilance.Patches.Events
                 Player myTarget = Server.PlayerList.GetPlayer(target);
                 if (myPlayer == null || myTarget == null)
                     return true;
-                Environment.OnUncuff(myTarget, myPlayer, true, out bool allow);
+                Vigilance.Utilities.Handling.OnUncuff(myTarget, myPlayer, true, out bool allow);
                 if (allow)
                     myTarget.CufferId = -1;
                 return false;

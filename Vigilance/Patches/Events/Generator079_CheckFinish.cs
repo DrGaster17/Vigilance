@@ -12,7 +12,7 @@ namespace Vigilance.Patches.Events
             {
                 if (__instance.prevFinish || __instance._localTime > 0.0)
                     return false;
-                Environment.OnGeneratorFinish(__instance, true, out bool allow);
+                Vigilance.Utilities.Handling.OnGeneratorFinish(__instance, true, out bool allow);
                 if (!allow)
                     return false;
                 __instance.prevFinish = true;

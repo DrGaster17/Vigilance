@@ -8,7 +8,7 @@ namespace Vigilance.Patches.Events
     {
         public static bool Prefix(CharacterClassManager __instance, ref bool __result)
         {
-			Environment.OnRoundStart();
+			Vigilance.Utilities.Handling.OnRoundStart();
 			OneOhSixContainer.used = false;
 			ServerLogs.AddLog(ServerLogs.Modules.Logger, "Round has been started.", ServerLogs.ServerLogType.GameEvent, false);
 			ServerConsole.AddLog("New round has been started.", System.ConsoleColor.Gray);

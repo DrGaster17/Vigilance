@@ -17,7 +17,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(__instance.Hub);
                 if (player == null)
                     return true;
-                Environment.OnSCP096Calm(player, true, out bool allow);
+                Vigilance.Utilities.Handling.OnSCP096Calm(player, true, out bool allow);
                 if (!allow)
                     return false;
                 __instance.EndCharge();

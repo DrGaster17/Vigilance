@@ -19,7 +19,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(__instance._hub);
                 if (player == null)
                     return true;
-                Environment.OnReload(player, animationOnly, true, out animationOnly, out bool allow);
+                Vigilance.Utilities.Handling.OnReload(player, animationOnly, true, out animationOnly, out bool allow);
                 return allow;
             }
             catch (Exception e)

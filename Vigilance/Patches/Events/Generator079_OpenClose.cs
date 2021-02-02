@@ -21,9 +21,9 @@ namespace Vigilance.Patches.Events
                 {
                     bool allow = true;
                     if (__instance.NetworkisDoorOpen)
-                        Environment.OnGeneratorClose(__instance, player, true, out allow);
+                        Vigilance.Utilities.Handling.OnGeneratorClose(__instance, player, true, out allow);
                     else
-                        Environment.OnGeneratorOpen(__instance, player, true, out allow);
+                        Vigilance.Utilities.Handling.OnGeneratorOpen(__instance, player, true, out allow);
                     if (!allow)
                         return false;
                     __instance._doorAnimationCooldown = 1.5f;
@@ -39,7 +39,7 @@ namespace Vigilance.Patches.Events
                     {
                         if (permissions[i] == "ARMORY_LVL_2" || player.BypassMode)
                         {
-                            Environment.OnGeneratorUnlock(__instance, player, true, out bool allow);
+                            Vigilance.Utilities.Handling.OnGeneratorUnlock(__instance, player, true, out bool allow);
                             if (!allow)
                                 return false;
                             __instance.NetworkisDoorUnlocked = true;

@@ -12,10 +12,8 @@ namespace Vigilance.Patches.Events
         {
             try
             {
-                if (!__instance._interactRateLimit.CanExecute(true))
-                    return false;
-                if (!__instance._hub.playerMovementSync.Grounded)
-                    return false;
+                if (!__instance._interactRateLimit.CanExecute(true)) return false;
+                if (!__instance._hub.playerMovementSync.Grounded) return false;
                 Player player = Server.PlayerList.GetPlayer(__instance._hub);
                 if (player == null)
                     return true;
@@ -25,7 +23,7 @@ namespace Vigilance.Patches.Events
                 if (__instance.iAm106 && !__instance.goingViaThePortal && Physics.Raycast(new Ray(__instance.transform.position, -__instance.transform.up), out raycastHit, 10f, __instance.teleportPlacementMask))
                 {
                     Vector3 pos = raycastHit.point - Vector3.up;
-                    Environment.OnSCP106CreatePortal(player, pos, true, out pos, out bool allow);
+                    Vigilance.Utilities.Handling.OnSCP106CreatePortal(player, pos, true, out pos, out bool allow);
                     if (allow)
                         __instance.SetPortalPosition(pos);
                 }

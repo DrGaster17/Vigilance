@@ -21,7 +21,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(__instance._hub);
                 if (player == null)
                     return false;
-                Environment.OnWarheadKeycardAccess(player, __instance._sr.BypassMode || (itemByID != null && itemByID.permissions.Contains("CONT_LVL_3")), out bool allow);
+                Vigilance.Utilities.Handling.OnWarheadKeycardAccess(player, __instance._sr.BypassMode || (itemByID != null && itemByID.permissions.Contains("CONT_LVL_3")), out bool allow);
                 if (allow)
                 {
                     Map.OutsitePanel.NetworkkeycardEntered = !Map.OutsitePanel.NetworkkeycardEntered;

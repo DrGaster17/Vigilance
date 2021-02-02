@@ -28,7 +28,7 @@ namespace Vigilance.Patches.Events
 					}
 					else if (__instance.type == PocketDimensionTeleport.PDTeleportType.Exit)
 					{
-						Environment.OnPocketEscape(Server.PlayerList.GetPlayer(component.gameObject), Vector3.zero, true, out Vector3 escape, out bool allow);
+						Vigilance.Utilities.Handling.OnPocketEscape(Server.PlayerList.GetPlayer(component.gameObject), Vector3.zero, true, out Vector3 escape, out bool allow);
 						__instance.tpPositions.Clear();
 						bool flag = false;
 						DecontaminationController.DecontaminationPhase[] decontaminationPhases = DecontaminationController.Singleton.DecontaminationPhases;

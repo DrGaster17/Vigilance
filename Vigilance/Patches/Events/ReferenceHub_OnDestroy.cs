@@ -15,7 +15,7 @@ namespace Vigilance.Patches.Events
                 if (player == null)
                     return true;
                 ServerConsole.AddLog($"\"{player.Nick}\" disconnected from {player.IpAddress} ({player.UserId})", ConsoleColor.White);
-                Environment.OnPlayerLeave(player, out bool destroy);
+                Vigilance.Utilities.Handling.OnPlayerLeave(player, out bool destroy);
                 Server.PlayerList.Remove(__instance);
                 ReferenceHub.Hubs.Remove(__instance.gameObject);
                 ReferenceHub.HubIds.Remove(__instance.queryProcessor.PlayerId);

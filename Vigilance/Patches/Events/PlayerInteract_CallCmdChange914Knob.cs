@@ -20,7 +20,7 @@ namespace Vigilance.Patches.Events
                 if (player == null)
                     return true;
                 Scp914Knob scp914Knob = Scp914Machine.singleton.knobState + 1;
-                Environment.OnSCP914ChangeKnob(player, scp914Knob, true, out scp914Knob, out bool allow);
+                Vigilance.Utilities.Handling.OnSCP914ChangeKnob(player, scp914Knob, true, out scp914Knob, out bool allow);
                 if (!allow)
                     return false;
                 Scp914Machine.singleton.NetworkknobState = scp914Knob;

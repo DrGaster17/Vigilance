@@ -21,7 +21,7 @@ namespace Vigilance.Patches.Events
                     return false;
                 if (ServerGuard.VPNShield.CheckIP(player))
                     return false;
-                Environment.OnPlayerJoin(player);
+                Vigilance.Utilities.Handling.OnPlayerJoin(player);
                 ServerConsole.AddLog($"\"{player.Nick}\" joined from {player.IpAddress} ({player.UserId})", ConsoleColor.White);
                 ServerLogs.AddLog(ServerLogs.Modules.Networking, $"Nickname of {player.UserId} is now {player.Nick}", ServerLogs.ServerLogType.ConnectionUpdate);
                 return false;

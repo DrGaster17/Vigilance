@@ -32,7 +32,7 @@ namespace Vigilance.Patches.Events
                 singleton.lockers[lockerId].chambers[chamberNumber].SetCooldown();
                 string accessToken = singleton.lockers[lockerId].chambers[chamberNumber].accessToken;
                 var itemById = __instance._inv.GetItemByID(__instance._inv.curItem);
-                Environment.OnUseLocker(player, singleton.lockers[lockerId], accessToken, string.IsNullOrEmpty(accessToken) || (itemById != null && itemById.permissions.Contains(accessToken)) || __instance._sr.BypassMode, out accessToken, out bool allow);
+                Vigilance.Utilities.Handling.OnUseLocker(player, singleton.lockers[lockerId], accessToken, string.IsNullOrEmpty(accessToken) || (itemById != null && itemById.permissions.Contains(accessToken)) || __instance._sr.BypassMode, out accessToken, out bool allow);
                 if (allow)
                 {
                     bool flag = (singleton.openLockers[lockerId] & 1 << chamberNumber) != 1 << chamberNumber;

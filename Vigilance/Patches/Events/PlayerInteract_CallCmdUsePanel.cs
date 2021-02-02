@@ -20,7 +20,7 @@ namespace Vigilance.Patches.Events
 					return false;
 				if (n == PlayerInteract.AlphaPanelOperations.Cancel)
 				{
-					Environment.OnWarheadCancel(player, Map.Warhead.TimeToDetonation, true, out AlphaWarheadController.Host.timeToDetonation, out bool allow);
+					Vigilance.Utilities.Handling.OnWarheadCancel(player, Map.Warhead.TimeToDetonation, true, out AlphaWarheadController.Host.timeToDetonation, out bool allow);
 					if (!allow)
 						return false;
 					__instance.OnInteract();
@@ -38,7 +38,7 @@ namespace Vigilance.Patches.Events
 						state = false;
 					else
 						state = true;
-					Environment.OnSwitchLever(player, Map.NukesitePanel.enabled, state, true, out state, out bool allow);
+					Vigilance.Utilities.Handling.OnSwitchLever(player, Map.NukesitePanel.enabled, state, true, out state, out bool allow);
 					if (!allow)
 						return false;
 					__instance.OnInteract();

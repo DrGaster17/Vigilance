@@ -36,7 +36,7 @@ namespace Vigilance.Patches.Events
                         flag = true;
                     }
                 }
-                Environment.OnCheckEscape(player, true, out bool allow);
+                Vigilance.Utilities.Handling.OnCheckEscape(player, true, out bool allow);
                 if (!allow)
                     return false;
                 RespawnTickets singleton = RespawnTickets.Singleton;

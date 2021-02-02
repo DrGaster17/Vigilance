@@ -20,7 +20,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(__instance._hub);
                 if (player == null)
                     return true;
-                Environment.OnSCP914Activate(player, (float)NetworkTime.time, true, out float time, out bool allow);
+                Vigilance.Utilities.Handling.OnSCP914Activate(player, (float)NetworkTime.time, true, out float time, out bool allow);
                 if (!allow)
                     return false;
                 Scp914Machine.singleton.RpcActivate(time);

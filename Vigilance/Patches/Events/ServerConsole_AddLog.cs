@@ -10,9 +10,9 @@ namespace Vigilance.Patches.Events
         {
             try
             {
-                Environment.OnConsoleAddLog(q);
+                Vigilance.Utilities.Handling.OnConsoleAddLog(q);
                 if (q == "Waiting for players...")
-                    Environment.OnWaitingForPlayers();
+                    Vigilance.Utilities.Handling.OnWaitingForPlayers();
             }
             catch (Exception e)
             {

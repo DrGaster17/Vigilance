@@ -16,7 +16,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(__instance._hub);
                 if (player == null)
                     return;
-                Environment.OnSpawn(player, player.Position, player.Role, true, out Vector3 pos, out RoleType role, out bool allow);
+                Vigilance.Utilities.Handling.OnSpawn(player, player.Position, player.Role, true, out Vector3 pos, out RoleType role, out bool allow);
                 if (player.Distance(pos) > 1f)
                     player.Teleport(pos);
                 if (player.Role != role)

@@ -55,7 +55,7 @@ namespace Vigilance.Patches.Events
                                 num2 /= 2f;
                             if (NetworkServer.active)
                             {
-                                Environment.OnSCP079GainExp(player, type, num2, true, out num2, out bool allow);
+                                Vigilance.Utilities.Handling.OnSCP079GainExp(player, type, num2, true, out num2, out bool allow);
                                 if (!allow)
                                     return false;
                                 __instance.AddExperience(num2);
@@ -72,7 +72,7 @@ namespace Vigilance.Patches.Events
                             if (NetworkServer.active)
                             {
                                 float exp = (float)details;
-                                Environment.OnSCP079GainExp(player, type, exp, true, out exp, out bool allow);
+                                Vigilance.Utilities.Handling.OnSCP079GainExp(player, type, exp, true, out exp, out bool allow);
                                 if (!allow)
                                     return false;
                                 __instance.AddExperience(exp);
@@ -108,7 +108,7 @@ namespace Vigilance.Patches.Events
                                 num3 = Mathf.Round(num3 * num4 * 10f) / 10f;
                                 if (NetworkServer.active)
                                 {
-                                    Environment.OnSCP079GainExp(player, type, num3, true, out num3, out bool allow);
+                                    Vigilance.Utilities.Handling.OnSCP079GainExp(player, type, num3, true, out num3, out bool allow);
                                     if (!allow)
                                         return false;
                                     __instance.AddExperience(num3);

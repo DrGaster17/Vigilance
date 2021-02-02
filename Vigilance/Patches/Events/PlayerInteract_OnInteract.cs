@@ -14,7 +14,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(__instance._hub);
                 if (player == null)
                     return true;
-                Environment.OnInteract(player, true, out bool allow);
+                Vigilance.Utilities.Handling.OnInteract(player, true, out bool allow);
                 if (allow && !ConfigManager.ShouldKeepScp268)
                     __instance._scp268.ServerDisable();
                 return false;

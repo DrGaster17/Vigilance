@@ -22,7 +22,7 @@ namespace Vigilance.Patches.Events
                     LastType = type;
                     LastRotation = rot;
                     LastIsBlood = isBlood;
-                    Environment.OnPlaceBlood(type, pos, true, out pos, out bool allow); 
+                    Vigilance.Utilities.Handling.OnPlaceBlood(type, pos, true, out pos, out bool allow); 
                     return allow && ConfigManager.SpawnBlood;
                 }
                 else
@@ -31,7 +31,7 @@ namespace Vigilance.Patches.Events
                     LastType = type;
                     LastRotation = rot;
                     LastIsBlood = isBlood;
-                    Environment.OnPlaceDecal(pos, true, out pos, out bool allow);
+                    Vigilance.Utilities.Handling.OnPlaceDecal(pos, true, out pos, out bool allow);
                     return allow && ConfigManager.SpawnDecal;
                 }
             }

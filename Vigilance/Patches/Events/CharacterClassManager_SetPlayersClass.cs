@@ -15,7 +15,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(ply);
                 if (ply == null)
                     return;
-                Environment.OnSetClass(player, classid, true, out RoleType roleType, out bool allow);
+                Vigilance.Utilities.Handling.OnSetClass(player, classid, true, out RoleType roleType, out bool allow);
                 if (roleType != player.Role)
                     player.SetRole(roleType, true, false);
                 if (!allow)

@@ -81,7 +81,7 @@ namespace Vigilance.Patches.Events
                                 return false;
                             if (!ConfigManager.CanScp049ReviveOther && component.owner.DeathCause.GetDamageInfo() != DamageType.Scp049)
                                 return false;
-                            Environment.OnRecall(myPlayer, component, true, out bool allow);
+                            Vigilance.Utilities.Handling.OnRecall(myPlayer, component, true, out bool allow);
                             if (!allow)
                                 return false;
                             GameCore.Console.AddDebugLog("SCPCTRL", "SCP-049 | Request 'finish recalling' accepted", MessageImportance.LessImportant, false);

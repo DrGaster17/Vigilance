@@ -24,7 +24,7 @@ namespace Vigilance.Patches.Events
                 {
                     if (player.Role == RoleType.Scp106 && !player.GodMode)
                     {
-                        Environment.OnSCP106Contain(i, player, true, out bool allow);
+                        Vigilance.Utilities.Handling.OnSCP106Contain(i, player, true, out bool allow);
                         player.Hub.scp106PlayerScript.Contain(__instance._hub);
                         __instance.RpcContain106(__instance.gameObject);
                         OneOhSixContainer.used = true;

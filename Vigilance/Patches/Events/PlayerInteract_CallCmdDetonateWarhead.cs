@@ -22,7 +22,7 @@ namespace Vigilance.Patches.Events
                 {
                     if (__instance.ChckDis(Map.OutsitePanelScript.transform.position) && AlphaWarheadOutsitePanel.nukeside.enabled && Map.OutsitePanel.keycardEntered)
                     {
-                        Environment.OnWarheadStart(player, AlphaWarheadController.Host.timeToDetonation, true, out AlphaWarheadController.Host.timeToDetonation, out bool allow);
+                        Vigilance.Utilities.Handling.OnWarheadStart(player, AlphaWarheadController.Host.timeToDetonation, true, out AlphaWarheadController.Host.timeToDetonation, out bool allow);
                         AlphaWarheadController.Host.StartDetonation();
                         ServerLogs.AddLog(ServerLogs.Modules.Warhead, __instance._hub.LoggedNameFromRefHub() + " started the Alpha Warhead detonation.", ServerLogs.ServerLogType.GameEvent);
                         __instance.OnInteract();

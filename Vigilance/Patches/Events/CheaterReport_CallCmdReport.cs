@@ -81,7 +81,7 @@ namespace Vigilance.Patches.Events
                 string reportedNickname = referenceHub.nicknameSync.MyNick;
                 if (!notifyGm)
                 {
-                    Environment.OnLocalReport(reason, Server.PlayerList.GetPlayer(reporterCcm._hub), Server.PlayerList.GetPlayer(reportedCcm._hub), true, out bool allo);
+                    Vigilance.Utilities.Handling.OnLocalReport(reason, Server.PlayerList.GetPlayer(reporterCcm._hub), Server.PlayerList.GetPlayer(reportedCcm._hub), true, out bool allo);
                     if (!allo)
                         return false;
                     Console.AddLog(string.Concat(new string[]
@@ -118,7 +118,7 @@ namespace Vigilance.Patches.Events
                 }
                 __instance._lastReport = UnityEngine.Time.time;
                 __instance._reportedPlayersAmount++;
-                Environment.OnGlobalReport(reason, Server.PlayerList.GetPlayer(reporterCcm.gameObject), Server.PlayerList.GetPlayer(reportedCcm.gameObject), true, out bool allow);
+                Vigilance.Utilities.Handling.OnGlobalReport(reason, Server.PlayerList.GetPlayer(reporterCcm.gameObject), Server.PlayerList.GetPlayer(reportedCcm.gameObject), true, out bool allow);
                 if (!allow)
                     return false;
                 GameCore.Console.AddLog(string.Concat(new string[]

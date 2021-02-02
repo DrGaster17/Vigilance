@@ -19,7 +19,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(__instance.ccm._hub);
                 if (player == null)
                     return true;
-                Environment.OnSyncData(player, v2, state, true, out state, out bool allow);
+                Vigilance.Utilities.Handling.OnSyncData(player, v2, state, true, out state, out bool allow);
                 if (!allow)
                     return false;
                 __instance.NetworkcurAnim = state;

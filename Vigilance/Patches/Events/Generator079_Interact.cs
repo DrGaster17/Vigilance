@@ -30,7 +30,7 @@ namespace Vigilance.Patches.Events
                             {
                                 if (item.id == ItemType.WeaponManagerTablet)
                                 {
-                                    Environment.OnGeneratorInsert(__instance, player, true, out bool allow);
+                                    Vigilance.Utilities.Handling.OnGeneratorInsert(__instance, player, true, out bool allow);
                                     if (!allow)
                                         return false;
                                     player.RemoveItem(item);
@@ -47,7 +47,7 @@ namespace Vigilance.Patches.Events
                 Player ply = Server.PlayerList.GetPlayer(person);
                 if (ply == null)
                     return true;
-                Environment.OnGeneratorEject(__instance, ply, true, out bool allow2);
+                Vigilance.Utilities.Handling.OnGeneratorEject(__instance, ply, true, out bool allow2);
                 if (!allow2)
                     return false;
                 __instance.EjectTablet();

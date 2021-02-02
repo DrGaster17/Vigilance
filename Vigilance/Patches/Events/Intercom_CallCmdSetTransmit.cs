@@ -20,7 +20,7 @@ namespace Vigilance.Patches.Events
                 {
                     if (!__instance.ServerAllowToSpeak())
                         return false;
-                    Environment.OnIntercomSpeak(ply, true, out bool allow);
+                    Vigilance.Utilities.Handling.OnIntercomSpeak(ply, true, out bool allow);
                     if (!allow)
                         return false;
                     Intercom.host.RequestTransmission(__instance.gameObject);
@@ -29,7 +29,7 @@ namespace Vigilance.Patches.Events
                 {
                     if (!(Intercom.host.Networkspeaker == __instance.gameObject))
                         return false;
-                    Environment.OnIntercomSpeak(ply, true, out bool allow);
+                    Vigilance.Utilities.Handling.OnIntercomSpeak(ply, true, out bool allow);
                     if (!allow)
                         return false;
                     Intercom.host.RequestTransmission(null);

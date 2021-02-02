@@ -23,12 +23,12 @@ namespace Vigilance.Patches.Events
                 Inventory.SyncItemInfo syncItemInfo = __instance.items[itemInventoryIndex];
                 if (__instance.items[itemInventoryIndex].id != syncItemInfo.id)
                     return false;
-                Environment.OnDropItem(syncItemInfo, player, true, out syncItemInfo, out bool allow);
+                Vigilance.Utilities.Handling.OnDropItem(syncItemInfo, player, true, out syncItemInfo, out bool allow);
                 if (!allow)
                     return false;
                 Pickup droppedPickup = __instance.SetPickup(syncItemInfo.id, syncItemInfo.durability, __instance.transform.position, __instance.camera.transform.rotation, syncItemInfo.modSight, syncItemInfo.modBarrel, syncItemInfo.modOther);
                 __instance.items.RemoveAt(itemInventoryIndex);
-                Environment.OnDroppedItem(droppedPickup, player);
+                Vigilance.Utilities.Handling.OnDroppedItem(droppedPickup, player);
                 if (player != null)
                 {
                     if (!Pickups.ContainsKey(player))

@@ -14,7 +14,7 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(__instance.gameObject);
                 if (player == null)
                     return true;
-                Environment.OnSCP079GainLvl(player, newLvl, true, out newLvl, out bool allow);
+                Vigilance.Utilities.Handling.OnSCP079GainLvl(player, newLvl, true, out newLvl, out bool allow);
                 if (allow)
                     __instance.Lvl = (byte)newLvl;
                 return allow;

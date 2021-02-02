@@ -16,7 +16,7 @@ namespace Vigilance.Patches.Events
             {
                 LastPosition = pos;
                 LastType = type;
-                Environment.OnPlaceBlood(type, pos, true, out pos, out bool allow);
+                Vigilance.Utilities.Handling.OnPlaceBlood(type, pos, true, out pos, out bool allow);
                 return allow && ConfigManager.SpawnBlood;
             }
             catch (Exception e)

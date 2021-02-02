@@ -28,7 +28,7 @@ namespace Vigilance.Patches.Events
                     return false;
                 float delay = Mathf.Clamp((float)(time - NetworkTime.time), 0f, grenadeSettings.throwAnimationDuration);
                 float forceMultiplier = slowThrow ? 0.5f : 1f;
-                Environment.OnThrowGrenade(player, grenadeSettings.grenadeInstance.GetComponent<Grenade>(), __instance, grenadeSettings.grenadeInstance, ((GrenadeType)(int)grenadeSettings.inventoryID), true, out bool allow);
+                Vigilance.Utilities.Handling.OnThrowGrenade(player, grenadeSettings.grenadeInstance.GetComponent<Grenade>(), __instance, grenadeSettings.grenadeInstance, ((GrenadeType)(int)grenadeSettings.inventoryID), true, out bool allow);
                 if (!allow)
                     return false;
                 Timing.RunCoroutine(__instance._ServerThrowGrenade(grenadeSettings, forceMultiplier, __instance.hub.inventory.GetItemIndex(), delay), Segment.FixedUpdate);

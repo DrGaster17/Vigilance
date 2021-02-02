@@ -19,7 +19,7 @@ namespace Vigilance.Patches.Events
                 {
                     if (ConfigManager.TeslaTriggerableRoles.Contains(ply.Role) && !Map.TeslaGatesDisabled && !ply.GodMode)
                     {
-                        Environment.OnTriggerTesla(ply, __instance, true, out bool allow);
+                        Vigilance.Utilities.Handling.OnTriggerTesla(ply, __instance, true, out bool allow);
                         return allow;
                     }
                 }

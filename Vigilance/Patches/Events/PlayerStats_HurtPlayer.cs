@@ -64,7 +64,7 @@ namespace Vigilance.Patches.Events
 				Player myPlayer = Server.PlayerList.GetPlayer(__instance.ccm._hub);
 				if (myTarget == null || myPlayer == null)
 					return true;
-				Environment.OnHurt(myTarget, myPlayer, info, true, out info, out bool allow);
+				Vigilance.Utilities.Handling.OnHurt(myTarget, myPlayer, info, true, out info, out bool allow);
 				if (!allow)
 					return false;
 				float health = playerStats.Health;
@@ -174,7 +174,7 @@ namespace Vigilance.Patches.Events
 						__instance.TargetAchieve(__instance.connectionToClient, "illpassthanks");
 					if (__instance.ccm.CurRole.team == Team.RSC && __instance.ccm.Classes.SafeGet(characterClassManager.CurClass).team == Team.SCP)
 						__instance.TargetAchieve(__instance.connectionToClient, "timetodoitmyself");
-					Environment.OnPlayerDie(myPlayer, myTarget, info, true, out info, out bool allow2, out bool spawnRagdoll);
+					Vigilance.Utilities.Handling.OnPlayerDie(myPlayer, myTarget, info, true, out info, out bool allow2, out bool spawnRagdoll);
 					if (!allow2)
 						return false;
 					bool flag6 = info.IsPlayer && referenceHub == info.RHub;

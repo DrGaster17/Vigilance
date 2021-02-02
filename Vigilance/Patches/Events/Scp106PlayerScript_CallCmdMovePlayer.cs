@@ -21,9 +21,9 @@ namespace Vigilance.Patches.Events
                 Player player = Server.PlayerList.GetPlayer(ply);
                 if (player == null)
                     return true;
-                if (player.GodMode || player.IsAnySCP)
+                if (player.GodMode || player.IsSCP)
                     return false;
-                if (!ServerTime.CheckSynchronization(t) || !__instance.iAm106 || Vector3.Distance(__instance._hub.playerMovementSync.RealModelPosition, ply.transform.position) >= 3f || player.IsAnySCP)
+                if (!ServerTime.CheckSynchronization(t) || !__instance.iAm106 || Vector3.Distance(__instance._hub.playerMovementSync.RealModelPosition, ply.transform.position) >= 3f || player.IsSCP)
                     return false;
 
                 __instance._hub.characterClassManager.RpcPlaceBlood(ply.transform.position, 1, 2f);
@@ -36,7 +36,7 @@ namespace Vigilance.Patches.Events
                 }
                 else
                 {
-                    Environment.OnPocketEnter(player, true, ConfigManager.Scp106PocketEnterDamage, true, out bool hurt, out float damage, out bool allow);
+                    Vigilance.Utilities.Handling.OnPocketEnter(player, true, ConfigManager.Scp106PocketEnterDamage, true, out bool hurt, out float damage, out bool allow);
                     if (!allow)
                         return false;
                     if (hurt)

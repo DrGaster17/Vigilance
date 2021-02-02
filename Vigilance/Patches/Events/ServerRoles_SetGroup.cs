@@ -18,8 +18,7 @@ namespace Vigilance.Patches.Events
                 LastGroup = group;
                 if (group == null)
                 {
-                    if (__instance.RaEverywhere && __instance._globalPerms == ServerStatic.PermissionsHandler.FullPerm)
-                        return false;
+                    if (__instance.RaEverywhere && __instance._globalPerms == ServerStatic.PermissionsHandler.FullPerm) return false;
                     __instance.RemoteAdmin = (__instance._globalPerms > 0UL);
                     __instance.Permissions = __instance._globalPerms;
                     __instance.RemoteAdminMode = ((__instance._globalPerms == 0UL) ? ServerRoles.AccessMode.LocalAccess : ServerRoles.AccessMode.GlobalAccess);
@@ -40,7 +39,7 @@ namespace Vigilance.Patches.Events
                     Player player = Server.PlayerList.GetPlayer(__instance._hub);
                     if (player == null)
                         return false;
-                    Environment.OnSetGroup(player, group, true, out group, out bool allow);
+                    Vigilance.Utilities.Handling.OnSetGroup(player, group, true, out group, out bool allow);
                     if (!allow)
                         return false;
                     player.ConsoleMessage((!byAdmin) ? "Updating your group on server (local permissions)..." : "Updating your group on server (set by server administrator)...", "cyan");

@@ -11,8 +11,8 @@ namespace Vigilance.Patches.Events
         {
             try
             {
-                int seed = Environment.GenerateMapSeed();
-                Environment.OnGenerateSeed(seed, out seed);
+                int seed = Vigilance.Utilities.Utils.GenerateMapSeed();
+                Vigilance.Utilities.Handling.OnGenerateSeed(seed, out seed);
                 __instance.Network_syncSeed = seed;
                 return false;
             }

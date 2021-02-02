@@ -52,7 +52,7 @@ namespace Vigilance.Patches.Events
 							}
 							string text3 = component.RequiredPermissions.RequiredPermissions.ToString();
 							float manaFromLabel = __instance.GetManaFromLabel("Door Interaction " + (text3.Contains(",") ? text3.Split(',')[0] : text3), __instance.abilities);
-							Environment.OnSCP079Interact(player, Scp079Interactable.InteractableType.Door, target, manaFromLabel, true, out manaFromLabel, out bool allow);
+							Vigilance.Utilities.Handling.OnSCP079Interact(player, Scp079Interactable.InteractableType.Door, target, manaFromLabel, true, out manaFromLabel, out bool allow);
 							if (!allow)
 								return false;
 							if (manaFromLabel > __instance.curMana)
@@ -101,7 +101,7 @@ namespace Vigilance.Patches.Events
 							}
 
 							float manaFromLabel = __instance.GetManaFromLabel("Door Lock Minimum", __instance.abilities);
-							Environment.OnSCP079Interact(player, Scp079Interactable.InteractableType.Door, target, manaFromLabel, true, out manaFromLabel, out bool allow2);
+							Vigilance.Utilities.Handling.OnSCP079Interact(player, Scp079Interactable.InteractableType.Door, target, manaFromLabel, true, out manaFromLabel, out bool allow2);
 							if (!allow2)
 								return false;
 							if (manaFromLabel > __instance.curMana)
@@ -122,7 +122,7 @@ namespace Vigilance.Patches.Events
 							string text2 = __instance.currentZone + "/" + __instance.currentRoom + "/Scp079Speaker";
 							GameObject gameObject3 = GameObject.Find(text2);
 							float manaFromLabel = __instance.GetManaFromLabel("Speaker Start", __instance.abilities);
-							Environment.OnSCP079Interact(player, Scp079Interactable.InteractableType.Speaker, target, manaFromLabel, true, out manaFromLabel, out bool allow3);
+							Vigilance.Utilities.Handling.OnSCP079Interact(player, Scp079Interactable.InteractableType.Speaker, target, manaFromLabel, true, out manaFromLabel, out bool allow3);
 							if (!allow3)
 								return false;
 							if (manaFromLabel * 1.5f > __instance.curMana)
@@ -138,7 +138,7 @@ namespace Vigilance.Patches.Events
 							break;
 						}
 					case "STOPSPEAKER":
-						Environment.OnSCP079Interact(player, Scp079Interactable.InteractableType.Speaker, target, 0f, true, out float cost, out bool allow4);
+						Vigilance.Utilities.Handling.OnSCP079Interact(player, Scp079Interactable.InteractableType.Speaker, target, 0f, true, out float cost, out bool allow4);
 						if (!allow4)
 							return false;
 						if (cost > 0f)
@@ -148,7 +148,7 @@ namespace Vigilance.Patches.Events
 					case "ELEVATORTELEPORT":
 						{
 							float manaFromLabel = __instance.GetManaFromLabel("Elevator Teleport", __instance.abilities);
-							Environment.OnSCP079Interact(player, Scp079Interactable.InteractableType.ElevatorTeleport, target, manaFromLabel, true, out manaFromLabel, out bool allow5);
+							Vigilance.Utilities.Handling.OnSCP079Interact(player, Scp079Interactable.InteractableType.ElevatorTeleport, target, manaFromLabel, true, out manaFromLabel, out bool allow5);
 							if (!allow5)
 								return false;
 							if (manaFromLabel > __instance.curMana)
@@ -232,7 +232,7 @@ namespace Vigilance.Patches.Events
 					case "ELEVATORUSE":
 						{
 							float manaFromLabel = __instance.GetManaFromLabel("Elevator Use", __instance.abilities);
-							Environment.OnSCP079Interact(player, Scp079Interactable.InteractableType.ElevatorUse, target, manaFromLabel, true, out manaFromLabel, out bool allow6);
+							Vigilance.Utilities.Handling.OnSCP079Interact(player, Scp079Interactable.InteractableType.ElevatorUse, target, manaFromLabel, true, out manaFromLabel, out bool allow6);
 							if (!allow6)
 								return false;
 							if (manaFromLabel > __instance.curMana)
@@ -266,7 +266,7 @@ namespace Vigilance.Patches.Events
 					case "TESLA":
 						{
 							float manaFromLabel = __instance.GetManaFromLabel("Tesla Gate Burst", __instance.abilities);
-							Environment.OnSCP079Interact(player, Scp079Interactable.InteractableType.Tesla, target, manaFromLabel, true, out manaFromLabel, out bool allow7);
+							Vigilance.Utilities.Handling.OnSCP079Interact(player, Scp079Interactable.InteractableType.Tesla, target, manaFromLabel, true, out manaFromLabel, out bool allow7);
 							if (!allow7)
 								return false;
 							if (manaFromLabel > __instance.curMana)
@@ -291,7 +291,7 @@ namespace Vigilance.Patches.Events
 								break;
 							}
 							float manaFromLabel = __instance.GetManaFromLabel("Room Lockdown", __instance.abilities);
-							Environment.OnSCP079Interact(player, Scp079Interactable.InteractableType.Lockdown, target, manaFromLabel, true, out manaFromLabel, out bool allow8);
+							Vigilance.Utilities.Handling.OnSCP079Interact(player, Scp079Interactable.InteractableType.Lockdown, target, manaFromLabel, true, out manaFromLabel, out bool allow8);
 							if (!allow8)
 								return false;
 							if (manaFromLabel > __instance.curMana)

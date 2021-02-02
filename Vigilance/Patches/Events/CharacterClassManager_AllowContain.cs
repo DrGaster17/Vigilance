@@ -18,9 +18,9 @@ namespace Vigilance.Patches.Events
                 {
                     if (!player.Hub.isDedicatedServer && player.Hub.Ready && Vector3.Distance(player.Hub.transform.position, __instance._lureSpj.transform.position) < 1.97f)
                     {
-                        if (!player.IsAnySCP && player.IsAlive && !player.GodMode)
+                        if (!player.IsSCP && player.IsAlive && !player.GodMode)
                         {
-                            Environment.OnFemurEnter(player, true, out bool allow);
+                            Vigilance.Utilities.Handling.OnFemurEnter(player, true, out bool allow);
                             if (!allow)
                                 return false;
                             player.Hub.playerStats.HurtPlayer(new PlayerStats.HitInfo(10000f, "WORLD", DamageTypes.Lure, player.PlayerId), player.GameObject, true);

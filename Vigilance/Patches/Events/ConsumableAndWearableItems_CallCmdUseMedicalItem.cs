@@ -26,7 +26,7 @@ namespace Vigilance.Patches.Events
                     if (__instance.usableItems[i].inventoryID == player.ItemInHand && __instance.usableCooldowns[i] <= 0f)
                     {
                         int hp = Mathf.CeilToInt(__instance.hpToHeal);
-                        Environment.OnUseMedical(player, player.ItemInHand, hp, true, out hp, out bool allow);
+                        Vigilance.Utilities.Handling.OnUseMedical(player, player.ItemInHand, hp, true, out hp, out bool allow);
                         __instance.hpToHeal = hp;
                         if (!allow)
                             return false;
