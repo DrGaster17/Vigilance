@@ -5,14 +5,8 @@ namespace Vigilance
 {
 	public static class EventManager
 	{
-		private static Dictionary<Type, List<Wrapper>> _events;
-		private static Dictionary<Plugin, Snapshot> _snapshots;
-
-		public static void Enable()
-		{
-			_events = new Dictionary<Type, List<Wrapper>>();
-			_snapshots = new Dictionary<Plugin, Snapshot>();
-		}
+		private static Dictionary<Type, List<Wrapper>> _events = new Dictionary<Type, List<Wrapper>>();
+		private static Dictionary<Plugin, Snapshot> _snapshots = new Dictionary<Plugin, Snapshot>();
 
 		public static void Trigger<T>(Event ev) where T : EventHandler
 		{
@@ -54,11 +48,9 @@ namespace Vigilance
 
 		public static void UnregisterHandlers(Plugin plugin)
         {
-			if (!_snapshots.ContainsKey(plugin))
-				return;
+			if (!_snapshots.ContainsKey(plugin)) return;
 			List<Type> events = new List<Type>();
-			foreach (Snapshot.Entry entry in _snapshots[plugin].Entries)
-				events.Add(entry.Type);
+			foreach (Snapshot.Entry entry in _snapshots[plugin].Entries) events.Add(entry.Type);
 			_snapshots[plugin].Active = false;
 			_snapshots[plugin].Entries.Clear();
 			foreach (Type type in events)
@@ -75,16 +67,14 @@ namespace Vigilance
 		public static void RegisterHandler(Plugin plugin, Type eventType, EventHandler handler)
 		{
 			Wrapper wrapper = new Wrapper(plugin, handler);
-			if (!_snapshots.ContainsKey(plugin))
-				_snapshots.Add(plugin, new Snapshot());
+			if (!_snapshots.ContainsKey(plugin)) _snapshots.Add(plugin, new Snapshot());
 			_snapshots[plugin].Entries.Add(new Snapshot.Entry(eventType, wrapper));
 			AddEvent(eventType, wrapper, handler);
 		}
 
 		public static void UnregisterHandler(Plugin plugin, Type eventType, EventHandler handler)
         {
-			if (!_snapshots.ContainsKey(plugin) || !_events.ContainsKey(eventType))
-				return;
+			if (!_snapshots.ContainsKey(plugin) || !_events.ContainsKey(eventType)) return;
 			foreach (Snapshot.Entry entry in _snapshots[plugin].Entries)
             {
 				if (entry.Type == eventType)
@@ -109,6 +99,7 @@ namespace Vigilance
 				_events.Add(eventType, new List<Wrapper> { wrapper });
 				return;
 			}
+
 			_events[eventType].Add(wrapper);
 		}
 

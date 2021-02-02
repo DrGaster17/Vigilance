@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Vigilance.Utilities;
 
 namespace Vigilance
 {
@@ -35,10 +36,8 @@ namespace Vigilance
 				{
 					if (!Paths.ContainsKey(currentLines, key))
 					{
-						if (!string.IsNullOrEmpty(description) && !currentLines.Contains($"# {description}"))
-							writer.WriteLine($"# {description}");
-						if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(key))
-							writer.WriteLine($"{key}: {value}");
+						if (!string.IsNullOrEmpty(description) && !currentLines.Contains($"# {description}")) writer.WriteLine($"# {description}");
+						if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(key)) writer.WriteLine($"{key}: {value}");
 						writer.WriteLine("");
 					}
 					writer.Flush();

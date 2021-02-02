@@ -13,14 +13,15 @@ using Scp914;
 using LightContainmentZoneDecontamination;
 using System;
 using MapGeneration;
-using Interactables.Interobjects.DoorUtils;
 
 namespace Vigilance.API
 {
 	public static class Map
 	{
-		public static List<Room> _rooms = null;
+		private static List<Room> _rooms = null;
+
 		public static List<Door> Doors { get; internal set; }
+		public static List<WorkStation> WorkStations => FindObjects<WorkStation>();
 		public static List<Ragdoll> Ragdolls => FindObjects<Ragdoll>();
 		public static List<FlickerableLight> FlickerableLights { get; } = FindObjects<FlickerableLight>();
 		public static List<FlickerableLightController> LightControllers { get; } = FindObjects<FlickerableLightController>();
@@ -61,8 +62,7 @@ namespace Vigilance.API
 						_rooms.AddRange(GameObject.FindGameObjectsWithTag("Room").Select(r => new Room(r.name, r, r.transform.position)));
 						_rooms.Add(new Room("Root_*&*Outside Cams", GameObject.Find("Root_*&*Outside Cams"), GameObject.Find("Root_*&*Outside Cams").transform.position));
 						RoomInformation pocket = FindObjects<RoomInformation>().Where(h => h.CurrentRoomType == RoomInformation.RoomType.POCKET).FirstOrDefault();
-						if (pocket != null)
-							_rooms.Add(new Room("PocketDimension", pocket.gameObject, pocket.transform.position));
+						if (pocket != null) _rooms.Add(new Room("PocketDimension", pocket.gameObject, pocket.transform.position));
 					}
 					return _rooms;
 				}
@@ -165,7 +165,7 @@ namespace Vigilance.API
 					return info;
             }
 
-			foreach (RoomInformation.RoomType type in Environment.GetValues<RoomInformation.RoomType>())
+			foreach (RoomInformation.RoomType type in Utilities.Utils.GetValues<RoomInformation.RoomType>())
             {
 				string str = type.ToString();
 				if (str == search || str.ToLower() == search.ToLower() || str.Contains(search))
@@ -211,8 +211,8 @@ namespace Vigilance.API
 			if (room == null)
 			{
 				Ray ray = new Ray(objectInRoom.transform.position, Vector3.down);
-				if (Physics.RaycastNonAlloc(ray, Environment.Cache.CachedFindParentRoomRaycast, 10, 1 << 0, QueryTriggerInteraction.Ignore) == 1)
-					room = Environment.Cache.CachedFindParentRoomRaycast[0].collider.gameObject.GetComponentInParent<Room>();
+				if (Physics.RaycastNonAlloc(ray, Utilities.Utils.RaycastsCache, 10, 1 << 0, QueryTriggerInteraction.Ignore) == 1)
+					room = Utilities.Utils.RaycastsCache[0].collider.gameObject.GetComponentInParent<Room>();
 			}
 			if (room == null && rooms.Count != 0)
 				room = rooms[rooms.Count - 1];
@@ -223,7 +223,7 @@ namespace Vigilance.API
 		{
 			try
 			{
-				foreach (RoomType type in Environment.GetValues<RoomType>())
+				foreach (RoomType type in Utilities.Utils.GetValues<RoomType>())
                 {
 					if (type.ToString().ToLower() == name.ToLower())
 						return GetRoom(type);
@@ -286,91 +286,6 @@ namespace Vigilance.API
 		public static Vector3 GetRandomSpawnpoint(RoleType role) => PlayerManager.localPlayer.GetComponent<SpawnpointManager>().GetRandomPosition(role).transform.position;
 		public static void TurnOffLights(float time = 9999f, bool onlyHeavy = false) => Generators[0].ServerOvercharge(time, onlyHeavy);
 		public static Pickup SpawnItem(ItemType itemType, Vector3 position, Quaternion rotation = default, int sight = 0, int barrel = 0, int other = 0) => Server.LocalHub.inventory.SetPickup(itemType, -4.6566467E+11f, position, rotation, sight, barrel, other);
-
-		public static Grenade SpawnGrenade(Player player, GrenadeType grenadeType)
-		{
-			try
-			{
-				if (grenadeType == GrenadeType.FragGrenade)
-				{
-					GrenadeManager grenadeManager = player.GameObject.GetComponent<GrenadeManager>();
-					Grenade component = Object.Instantiate(grenadeManager.availableGrenades.FirstOrDefault((GrenadeSettings g) => g.inventoryID == ItemType.GrenadeFrag).grenadeInstance).GetComponent<Grenade>();
-					component.InitData(grenadeManager, Vector3.zero, Vector3.zero, 0f);
-					NetworkServer.Spawn(component.gameObject);
-					return component;
-				}
-
-				if (grenadeType == GrenadeType.FlashGrenade)
-				{
-					GrenadeManager grenadeManager2 = player.GameObject.GetComponent<GrenadeManager>();
-					Grenade component2 = Object.Instantiate(grenadeManager2.availableGrenades.FirstOrDefault((GrenadeSettings g) => g.inventoryID == ItemType.GrenadeFlash).grenadeInstance).GetComponent<Grenade>();
-					component2.InitData(grenadeManager2, Vector3.zero, Vector3.zero, 0f);
-					NetworkServer.Spawn(component2.gameObject);
-					return component2;
-				}
-
-				GrenadeManager grenadeManager3 = player.GameObject.GetComponent<GrenadeManager>();
-				Grenade component3 = Object.Instantiate(grenadeManager3.availableGrenades.FirstOrDefault((GrenadeSettings g) => g.inventoryID == ItemType.SCP018).grenadeInstance).GetComponent<Grenade>();
-				component3.InitData(grenadeManager3, Vector3.zero, Vector3.zero, 0f);
-				NetworkServer.Spawn(component3.gameObject);
-				return component3;
-			}
-			catch (Exception e)
-            {
-				Log.Add(nameof(SpawnGrenade), e);
-				return null;
-            }
-		}
-
-		public static GameObject SpawnDummyModel(Vector3 position, Quaternion rotation, RoleType role, float x, float y, float z)
-		{
-			try
-			{
-				GameObject obj = Object.Instantiate(NetworkManager.singleton.spawnPrefabs.FirstOrDefault(p => p.gameObject.name == "Player"));
-				CharacterClassManager ccm = obj.GetComponent<CharacterClassManager>();
-				ccm.CurClass = role;
-				ccm.RefreshModel(role);
-				obj.GetComponent<NicknameSync>().Network_myNickSync = "Dummy";
-				obj.GetComponent<QueryProcessor>().PlayerId = 9999;
-				obj.GetComponent<QueryProcessor>().NetworkPlayerId = 9999;
-				obj.transform.localScale = new Vector3(x, y, z);
-				obj.transform.position = position;
-				obj.transform.rotation = rotation;
-				NetworkServer.Spawn(obj);
-				return obj;
-			}
-			catch (Exception e)
-            {
-				Log.Add(nameof(SpawnDummyModel), e);
-				return null;
-            }
-		}
-
-		public static void SpawnRagdolls(Player player, int role, int count) => Timing.RunCoroutine(SpawnBodies(player.GetComponent<RagdollManager>(), role, count));
-
-		private static IEnumerator<float> SpawnBodies(RagdollManager rm, int role, int count)
-		{
-			for (int i = 0; i < count; i++)
-			{
-				rm.SpawnRagdoll(rm.transform.position + Vector3.up * 5, Quaternion.identity, Vector3.zero, role, new PlayerStats.HitInfo(1000f, "WORLD", DamageTypes.Falldown, 0), false, "SCP-343", "SCP-343", 0);
-				yield return Timing.WaitForSeconds(0.15f);
-			}
-		}
-
-		public static void RefreshDoors()
-        {
-			try
-			{
-				if (Doors != null)
-					Doors.Clear();
-				DoorExtensions.SetInfo();
-				Doors = DoorExtensions.Doors.Values.ToList();
-			}
-			catch (Exception e)
-            {
-				Log.Add("MAP", e);
-            }
-        }
 
 		public static class Warhead
 		{

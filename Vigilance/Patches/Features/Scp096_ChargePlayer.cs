@@ -20,7 +20,7 @@ namespace Vigilance.Patches.Features
 				Player myPlayer = Server.PlayerList.GetPlayer(player);
 				if (myPlayer == null)
 					return true;
-				if (!myPlayer.IsAnySCP && !Physics.Linecast(__instance.Hub.transform.position, player.transform.position, LayerMask.GetMask("Default", "Door", "Glass")))
+				if (!myPlayer.IsSCP && !Physics.Linecast(__instance.Hub.transform.position, player.transform.position, LayerMask.GetMask("Default", "Door", "Glass")))
 				{
 					if (!__instance._targets.Contains(player) && ConfigManager.Scp096CanKillOnlyTargets)
 						return false;

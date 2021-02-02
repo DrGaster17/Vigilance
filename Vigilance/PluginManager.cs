@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using CommandSystem.Commands;
 using Harmony;
 using Version = Vigilance.API.Version;
 using Vigilance.Extensions;
 using Vigilance.API;
+using Vigilance.Utilities;
 
 namespace Vigilance
 {
-    public class PluginManager
+    public static class PluginManager
     {
-        private static bool _enabled = false;
-
-        public static Version Version { get; } = new Version(5, 5, 4, "", false);
+        public static Version Version { get; } = new Version(5, 5, 5, "", false);
         public static List<string> CompatibleVersions = new List<string>() { "10.2.0", "10.2.1" };
         public static Dictionary<string, Assembly> Assemblies { get; set; }
         public static Dictionary<string, Plugin> Plugins { get; set; }
@@ -25,55 +23,10 @@ namespace Vigilance
         {
             try
             {
-                if (_enabled)
-                    return;
-                
-                if (!CompatibleVersions.Contains(Server.Version))
-                {
-                    Log.Add("PluginManager", $"This version ({Version}) is not compatible with your server version ({GameCore.Version.VersionString})!\nCompatible versions: {CompatibleVersions.AsString()}", LogType.Error);
-                    return;
-                }
-
-                if (Version.IsTesting)
-                    Log.Add("PluginManager", "This is a development version in testing. Except to see some bugs.", LogType.Warn);
-                if (Version.IsBeta)
-                    Log.Add("PluginManager", "This is a beta version. Except to see some bugs.", LogType.Warn);
-
-                Paths.CheckMainConfig();
-                Config = new YamlConfig(Paths.ConfigPath);
-                CommandManager.Enable();
-                EventManager.Enable();
-                Paths.CheckDirectories();
-                Paths.CheckDependencies();
-                Assemblies = new Dictionary<string, Assembly>();
-                Plugins = new Dictionary<string, Plugin>();
-                Dependencies = new Dictionary<string, Assembly>();
-                ConfigManager.Reload();
-
-                try
-                {
-                    HarmonyInstance = HarmonyInstance.Create("vigilance.patches");
-                    HarmonyInstance.PatchAll();
-                }
-                catch (Exception e)
-                {
-                    Log.Add("PluginManager", "An exception occured while patching!", LogType.Error);
-                    Log.Add("PluginManager", e);
-                }
-
-                try
-                {
-                    Reload();
-                }
-                catch (Exception e)
-                {
-                    Log.Add("PluginManager", "An exception occured while loading!", LogType.Error);
-                    Log.Add("PluginManager", e);
-                }
-
-                CustomNetworkManager.Modded = ConfigManager.MarkAsModded;
-                BuildInfoCommand.ModDescription = $"Vigilance v{Version} - a simple plugin loader and a little API for SCP: Secret Laboratory.";
-                _enabled = true;
+                Utilities.Utils.InitPluginManager();
+                HarmonyInstance = HarmonyInstance.Create("vigilance.patches");
+                HarmonyInstance.PatchAll();
+                Reload();
                 Log.Add("PluginManager", $"Succesfully loaded Vigilance version \"{Version}\"!\nPlugins: {Plugins.Values.Count}\nDependencies: {Dependencies.Values.Count}", LogType.Info);
             }
             catch (Exception e)
@@ -123,6 +76,7 @@ namespace Vigilance
                         if (!Assemblies.ContainsKey(file) && !Plugins.ContainsKey(file))
                         {
                             Assembly assembly = null;
+
                             try
                             {
                                 assembly = Assembly.LoadFrom(file);

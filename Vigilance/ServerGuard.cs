@@ -12,7 +12,6 @@ using Vigilance.Extensions;
 
 namespace Vigilance
 {
-
     public static class ServerGuard
     {
         private static List<string> _modules;
@@ -83,27 +82,19 @@ namespace Vigilance
 
         public static class VPNShield
         {
-
             public static bool IsEnabled => EnabledModules.Contains("vpn");
             public static string APIKey => ConfigManager.VpnApiKey;
 
             public static bool CheckIP(Player player)
             {
-                if (!ServerGuard.IsEnabled)
-                    return false;
-                if (!IsEnabled)
-                    return false;
-                if (player == null)
-                    return false;
-                if (APIKey.IsEmpty() || APIKey.ToLower() == "none")
-                    return false;
-                if (string.IsNullOrEmpty(player.UserId) || player.IpAddress == "localClient")
-                    return false;
+                if (!ServerGuard.IsEnabled) return false;
+                if (!IsEnabled) return false;
+                if (player == null) return false;
+                if (APIKey.IsEmpty() || APIKey.ToLower() == "none") return false;
+                if (string.IsNullOrEmpty(player.UserId) || player.IpAddress == "localClient") return false;
                 string ipAddress = player.IpAddress.Replace("::ffff:", "");
-                if (ConfigManager.IpWhitelist.Contains(ipAddress))
-                    return false;
-                if (ConfigManager.UserIdWhitelist.Contains(player.UserId))
-                    return false;
+                if (ConfigManager.IpWhitelist.Contains(ipAddress)) return false;
+                if (ConfigManager.UserIdWhitelist.Contains(player.UserId)) return false;
                 HttpWebResponse response = null;
                 try
                 {
@@ -143,20 +134,13 @@ namespace Vigilance
 
             public static bool CheckAccount(Player player)
             {
-                if (!ServerGuard.IsEnabled)
-                    return false;
-                if (!IsEnabled)
-                    return false;
-                if (player == null)
-                    return false;
-                if (string.IsNullOrEmpty(player.UserId))
-                    return false;
-                if (!player.UserId.Contains("@steam") || !player.UserIdType.IsSteam() | player.UserIdType != UserIdType.Steam)
-                    return false;
-                if (ConfigManager.UserIdWhitelist.Contains(player.UserId))
-                    return false;
-                if (ConfigManager.IpWhitelist.Contains(player.IpAddress))
-                    return false;
+                if (!ServerGuard.IsEnabled) return false;
+                if (!IsEnabled) return false;
+                if (player == null) return false;
+                if (string.IsNullOrEmpty(player.UserId)) return false;
+                if (!player.UserId.Contains("@steam") || !player.UserIdType.IsSteam() | player.UserIdType != UserIdType.Steam) return false;
+                if (ConfigManager.UserIdWhitelist.Contains(player.UserId)) return false;
+                if (ConfigManager.IpWhitelist.Contains(player.IpAddress)) return false;
                 ServicePointManager.ServerCertificateValidationCallback = SSLValidation;
                 HttpWebResponse response = null;
                 try

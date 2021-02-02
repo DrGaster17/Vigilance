@@ -17,7 +17,7 @@ namespace Vigilance.Patches.CommandProccessing
 				Player admin = sender.GetPlayer();
 				if (admin == null)
 					return true;
-				Environment.OnRemoteAdminCommand(sender, q, true, out bool allow, out string reply);
+				Vigilance.Utilities.Handling.OnRemoteAdminCommand(sender, q, true, out bool allow, out string reply);
 				if (!allow)
 				{
 					sender.RaReply($"SERVER#{reply}", true, true, "");
@@ -36,7 +36,7 @@ namespace Vigilance.Patches.CommandProccessing
 					return false;
 				}
 
-				if (CommandManager.CallCommand(admin, query, out string response))
+				if (CommandManager.CallCommand(admin, query, out string response, out string color))
                 {
 					sender.RaReply($"{response}", true, true, "");
 					return false;

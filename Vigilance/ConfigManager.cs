@@ -2,6 +2,7 @@
 using Vigilance.Extensions;
 using System.IO;
 using System;
+using Vigilance.Utilities;
 
 namespace Vigilance
 {

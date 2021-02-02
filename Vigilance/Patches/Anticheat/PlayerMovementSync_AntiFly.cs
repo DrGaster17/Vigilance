@@ -8,8 +8,7 @@ namespace Vigilance.Patches.Anticheat
     {
         public static bool Prefix(PlayerMovementSync __instance, Vector3 pos, ref bool wasChanged, ref bool isLocked173)
         {
-            if (!ConfigManager.IsAntiCheatEnabled || !ConfigManager.IsAntiFlyEnabled)
-                return false;
+            if (!ConfigManager.IsAntiCheatEnabled || !ConfigManager.IsAntiFlyEnabled) return false;
             return true;
         }
     }

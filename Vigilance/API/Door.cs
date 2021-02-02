@@ -47,9 +47,9 @@ namespace Vigilance.API
             if (player.PlayerLock) return false;
             if (!_door.AllowInteracting(player.Hub, collider)) return false;
             if (_door.RequiredPermissions.RequiredPermissions == KeycardPermissions.None) return true;
-            if (player.IsAnySCP && (_door.RequiredPermissions.RequiredPermissions == KeycardPermissions.ScpOverride || _door.RequiredPermissions.RequiredPermissions.HasFlagFast(KeycardPermissions.ScpOverride))) return true;
-            if (player.ItemInHand == ItemType.None && !ConfigManager.RemoteCard && !player.IsAnySCP && _door.RequiredPermissions.RequiredPermissions != KeycardPermissions.None) return false;
-            if (player.Hub.inventory.items.Where(h => h.id.IsKeycard()).Count() < 1 && !player.IsAnySCP) return false;
+            if (player.IsSCP && (_door.RequiredPermissions.RequiredPermissions == KeycardPermissions.ScpOverride || _door.RequiredPermissions.RequiredPermissions.HasFlagFast(KeycardPermissions.ScpOverride))) return true;
+            if (player.ItemInHand == ItemType.None && !ConfigManager.RemoteCard && !player.IsSCP && _door.RequiredPermissions.RequiredPermissions != KeycardPermissions.None) return false;
+            if (player.Hub.inventory.items.Where(h => h.id.IsKeycard()).Count() < 1 && !player.IsSCP) return false;
             return allItems ? CheckAllPermissions(player) : CheckPermission(player.ItemInHand, player);
         }
 
@@ -76,7 +76,7 @@ namespace Vigilance.API
             if (player.BypassMode)
                 return true;
             if (item == null)
-                return player.IsAnySCP && (_door.RequiredPermissions.RequiredPermissions.HasFlagFast(KeycardPermissions.ScpOverride) || _door.RequiredPermissions.RequiredPermissions == KeycardPermissions.ScpOverride);
+                return player.IsSCP && (_door.RequiredPermissions.RequiredPermissions.HasFlagFast(KeycardPermissions.ScpOverride) || _door.RequiredPermissions.RequiredPermissions == KeycardPermissions.ScpOverride);
             if (_door.RequiredPermissions.RequiredPermissions == KeycardPermissions.None)
                 return true;
             KeycardPermissions keycardPermissions = DoorPermissionUtils.TranslateObsoletePermissions(item.permissions);

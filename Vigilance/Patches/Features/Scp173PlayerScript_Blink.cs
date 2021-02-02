@@ -26,7 +26,7 @@ namespace Vigilance.Patches.Features
                         }
                     }
                     if (triggers.Count > 0)
-                        Environment.OnBlink(scp, triggers);
+                        Vigilance.Utilities.Handling.OnBlink(scp, triggers);
                     ListPool<Player>.Shared.Return(triggers);
                 }
             }

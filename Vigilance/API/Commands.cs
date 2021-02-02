@@ -5,15 +5,14 @@ using Vigilance.Enums;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using Interactables.Interobjects.DoorUtils;
+using Vigilance.Utilities;
 
-namespace Vigilance.Registered
+namespace Vigilance.Commands
 {
 	public class CommandClean : CommandHandler
 	{
 		public string Command => "clean";
 		public string Usage => "Missing arguments!\nUsage: clean <itemId/all/*>";
-
 		public string Aliases => "";
 
         public string Execute(Player sender, string[] args)
@@ -22,8 +21,7 @@ namespace Vigilance.Registered
 				return Usage;
 			if (args[0].ToLower() == "*" || args[0].ToLower() == "all")
 			{
-				foreach (Pickup pickup in Map.FindObjects<Pickup>())
-					pickup.Delete();
+				foreach (Pickup pickup in Map.FindObjects<Pickup>()) pickup.Delete();
 				return "Succesfully cleared all items.";
 			}
 			else
@@ -37,6 +35,7 @@ namespace Vigilance.Registered
 						item = pickup.ItemId;
 					}
 				}
+
 				return $"Succesfully cleared all {item}s!";
 			}
 		}
@@ -45,9 +44,7 @@ namespace Vigilance.Registered
 	public class CommandDropAll : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: dropall <player>";
-
 		public string Command => "dropall";
-
 		public string Aliases => "da";
 
         public string Execute(Player sender, string[] args)
@@ -55,8 +52,7 @@ namespace Vigilance.Registered
 			if (args.Length < 1)
 				return Usage;
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			player.DropAllItems();
 			return $"Succesfully dropped all items for {player.Nick}";
 		}
@@ -65,9 +61,7 @@ namespace Vigilance.Registered
 	public class CommandGiveAll : CommandHandler
 	{
 		public string Usage => $"giveall <itemId>";
-
 		public string Command => "giveall";
-
 		public string Aliases => "ga";
 
         public string Execute(Player sender, string[] args)
@@ -75,10 +69,8 @@ namespace Vigilance.Registered
 			if (args.Length < 1)
 				return Usage;
 			ItemType item = args[0].GetItem();
-			if (item == ItemType.None)
-				return "Please specify a valid ItemID!";
-			foreach (Player player in Server.Players)
-				player.AddItem(item);
+			if (item == ItemType.None) return "Please specify a valid ItemID!";
+			foreach (Player player in Server.Players) player.AddItem(item);
 			return $"Succesfully added a {item} to all players.";
 		}
 	}
@@ -86,22 +78,16 @@ namespace Vigilance.Registered
 	public class CommandPlayers : CommandHandler
 	{
 		public string Usage => "";
-
 		public string Command => "players";
-
 		public string Aliases => "plys";
 
         public string Execute(Player sender, string[] args)
 		{
-			if (Server.Players.Count() == 0)
-				return "No players online.";
+			if (Server.Players.Count() == 0) return "No players online.";
 			string str = $"Players ({Server.Players.Count()}):\n";
 			List<Player> plys = Server.Players.ToList();
 			IOrderedEnumerable<Player> players = plys.OrderBy(s => s.PlayerId);
-			foreach (Player player in players)
-			{
-				str += $"{player.ToString()}\n";
-			}
+			foreach (Player player in players) str += $"{player}\n";
 			return str;
 		}
 	}
@@ -109,19 +95,16 @@ namespace Vigilance.Registered
 	public class CommandTeleport : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: tpx <player1/*> <player2>";
-
 		public string Command => "teleport";
-
 		public string Aliases => "tpx tp";
 
         public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 2)
-				return Usage;
+			if (args.Length < 2) return Usage;
 			Player p = args[1].GetPlayer();
-			if (p == null)
-				return "An error occured: Player is null.";
+			if (p == null) return "Player not found.";
 			Vector3 teleportTo = p.Position;
+
 			if (args[0].ToLower() == "*" || args[0].ToLower() == "all")
 			{
 				foreach (Player ply in Server.Players)
@@ -130,9 +113,9 @@ namespace Vigilance.Registered
 				}
 				return $"Succesfully teleported all players to {p.Nick}";
 			}
+
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			player.Teleport(teleportTo);
 			return $"Succesfully teleported {player.Nick} to {p.Nick}";
 		}
@@ -141,20 +124,16 @@ namespace Vigilance.Registered
 	public class CommandPersonalBroadcast : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: pbc <player> <time> <message>";
-
 		public string Command => "personalbroadcast";
-
 		public string Aliases => "pbc";
 
         public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 3)
-				return Usage;
+			if (args.Length < 3) return Usage;
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			int time = int.Parse(args[1]);
-			player.Broadcast($"<b><color=red>[Personal]</color></b>\n<b>{sender.Nick}</b>:\n<i>{args.SkipWords(2)}</i>", time);
+			player.Broadcast($"<b><color=red>[Personal]</color></b>\n<b>{sender.Nick}</b>:\n<i>{args.SkipWords(2)}</i>", time, false);
 			return $"Success!\nDuration: {time}\nMessage: {args.SkipWords(2)}\nPlayer: {player.Nick} ({player.UserId})";
 		}
 	}
@@ -162,9 +141,7 @@ namespace Vigilance.Registered
 	public class CommandAdminChat : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: abc <time> <message>";
-
 		public string Command => "adminbroadcast";
-
 		public string Aliases => "abc";
 
         public string Execute(Player sender, string[] args)
@@ -173,26 +150,20 @@ namespace Vigilance.Registered
 				return Usage;
 			IEnumerable<Player> admins = Server.PlayerList.Players.Values.Where(h => h.RemoteAdmin);
 			string message = args.SkipWords(1);
-			foreach (Player admin in admins)
-			{
-				admin.Broadcast($"<b><color=red>[AdminChat]</color></b>\n<b>{sender.Nick}</b>:\n<i>{message}</i>", int.Parse(args[0]));
-			}
-			return $"Success! Your message has been delivered to {admins.Count()} online administrators!\nMessage: {message}\nDuration: {int.Parse(args[0])} seconds.";
+			foreach (Player admin in admins) admin.Broadcast($"<b><color=red>[AdminChat]</color></b>\n<b>{sender.Nick}</b>:\n<i>{message}</i>", int.Parse(args[0]), false);
+			return $"Success! Your message was delivered to {admins.Count()} online administrators!\nMessage: {message}\nDuration: {int.Parse(args[0])} seconds.";
 		}
 	}
 
 	public class CommandClearRagdolls : CommandHandler
 	{
 		public string Usage => "";
-
-		public string Command => "clearragdolls";
-
+     	public string Command => "clearragdolls";
 		public string Aliases => "cr clearr";
 
         public string Execute(Player sender, string[] args)
 		{
-			foreach (Ragdoll ragdoll in Map.FindObjects<Ragdoll>())
-				ragdoll.Delete();
+			foreach (Ragdoll ragdoll in Map.FindObjects<Ragdoll>()) ragdoll.Delete();
 			return $"Succesfully deleted all ragdolls.";
 		}
 	}
@@ -200,9 +171,7 @@ namespace Vigilance.Registered
 	public class CommandReload : CommandHandler
 	{
 		public string Usage => "";
-
 		public string Command => "reload";
-
 		public string Aliases => "rel re";
 
         public string Execute(Player sender, string[] args)
@@ -216,9 +185,7 @@ namespace Vigilance.Registered
 	public class CommandRestart : CommandHandler
 	{
 		public string Usage => "";
-
 		public string Command => "restart";
-
 		public string Aliases => "reset res";
 
         public string Execute(Player sender, string[] args)
@@ -231,10 +198,8 @@ namespace Vigilance.Registered
 	public class CommandGrenade : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: grenade <player/*>";
-
 		public string Command => "grenade";
-
-		public string Aliases => "fraggrenade grenadefrag fg";
+    	public string Aliases => "fraggrenade grenadefrag fg";
 
         public string Execute(Player sender, string[] args)
 		{
@@ -242,14 +207,13 @@ namespace Vigilance.Registered
 				return Usage;
 			if (args[0].ToLower() == "*")
 			{
-				foreach (Player player in Server.Players)
-					Map.SpawnGrenade(player, GrenadeType.FragGrenade);
+				foreach (Player player in Server.Players) player.SpawnGrenade(GrenadeType.FragGrenade);
 				return $"Succesfully spawned a frag grenade at all players.";
 			}
+
 			Player player1 = args[0].GetPlayer();
-			if (player1 == null)
-				return "An error occured: Player is null.";
-			Map.SpawnGrenade(player1, GrenadeType.FragGrenade);
+			if (player1 == null) return "Player not found.";
+			player1.SpawnGrenade(GrenadeType.FragGrenade);
 			return $"Succesfully spawned a frag grenade at {player1.Nick}";
 		}
 	}
@@ -257,9 +221,7 @@ namespace Vigilance.Registered
 	public class CommandFlash : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: flash <player/*>";
-
 		public string Command => "flash";
-
 		public string Aliases => "flashgrenade grenadeflash";
 
         public string Execute(Player sender, string[] args)
@@ -268,14 +230,12 @@ namespace Vigilance.Registered
 				return Usage;
 			if (args[0] == "*")
 			{
-				foreach (Player player in Server.Players)
-					Map.SpawnGrenade(player, GrenadeType.FlashGrenade);
+				foreach (Player player in Server.Players) player.SpawnGrenade(GrenadeType.FlashGrenade);
 				return "Succesfully spawned a flash grenade at all players.";
 			}
 			Player ply = args[0].GetPlayer();
-			if (ply == null)
-				return "An error occured: Player is null.";
-			Map.SpawnGrenade(ply, GrenadeType.FlashGrenade);
+			if (ply == null) return "Player not found.";
+			ply.SpawnGrenade(GrenadeType.FlashGrenade);
 			return $"Succesfully spawned a flash grenade at {ply.Nick}";
 		}
 	}
@@ -283,9 +243,7 @@ namespace Vigilance.Registered
 	public class CommandBall : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: ball <player/*>";
-
 		public string Command => "ball";
-
 		public string Aliases => "018 scp018 spawnball spawn018 spawnscp018";
 
         public string Execute(Player sender, string[] args)
@@ -294,14 +252,13 @@ namespace Vigilance.Registered
 				return Usage;
 			if (args[0] == "*")
 			{
-				foreach (Player player in Server.Players)
-					Map.SpawnGrenade(player, GrenadeType.Scp018);
+				foreach (Player player in Server.Players) player.SpawnGrenade(GrenadeType.Scp018);
 				return "Succesfully spawned a SCP-018 at all players.";
 			}
+
 			Player ply = args[0].GetPlayer();
-			if (ply == null)
-				return "An error occured: Player is null.";
-			Map.SpawnGrenade(ply, GrenadeType.Scp018);
+			if (ply == null) return "Player not found.";
+			ply.SpawnGrenade(GrenadeType.Scp018);
 			return $"Succesfully spawned a SCP-018 at {ply.Nick}";
 		}
 	}
@@ -309,29 +266,22 @@ namespace Vigilance.Registered
 	public class CommandRagdoll : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: ragdoll <player/*> <role> <amount>";
-
 		public string Command => "ragdoll";
-
 		public string Aliases => "ra rg";
 
         public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 3)
-				return Usage;
-			if (!int.TryParse(args[1], out int role))
-				return "Please specify a valid role!";
-			if (!int.TryParse(args[2], out int amount))
-				return "Please specify a valid amount!";
+			if (args.Length < 3) return Usage;
+			if (!int.TryParse(args[1], out int role)) return "Please specify a valid role!";
+			if (!int.TryParse(args[2], out int amount)) return "Please specify a valid amount!";
 			if (args[0] == "*")
 			{
-				foreach (Player player in Server.Players)
-					Map.SpawnRagdolls(player, role, amount);
+				foreach (Player player in Server.Players) Utilities.Utils.SpawnRagdolls(player, role, amount);
 				return $"Succesfully spawned {amount} {(amount > 1 ? "ragdolls" : "ragdoll")} of {(RoleType)role} at all players.";
 			}
 			Player player1 = args[0].GetPlayer();
-			if (player1 == null)
-				return "An error occured: Player is null.";
-			Map.SpawnRagdolls(player1, role, amount);
+			if (player1 == null) return "Player not found.";
+			Utilities.Utils.SpawnRagdolls(player1, role, amount);
 			return $"Succesfully spawned {amount} {(amount > 1 ? "ragdolls" : "ragdoll")} of {(RoleType)role} at {player1.Nick}";
 		}
 	}
@@ -339,32 +289,27 @@ namespace Vigilance.Registered
 	public class CommandDummy : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: dummy <player/*> <role> <x> <y> <z>";
-
 		public string Command => "dummy";
-
 		public string Aliases => "model spawnmodel spawndummy";
 
         public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 5)
-				return Usage;
-			if (!int.TryParse(args[1], out int roleId))
-				return "Please specify a valid role!";
-			if (!float.TryParse(args[2], out float x) || !float.TryParse(args[3], out float y) || !float.TryParse(args[4], out float z))
-				return "Please specify a valid size!";
+			if (args.Length < 5) return Usage;
+			if (!int.TryParse(args[1], out int roleId)) return "Please specify a valid role!";
+			if (!float.TryParse(args[2], out float x) || !float.TryParse(args[3], out float y) || !float.TryParse(args[4], out float z)) return "Please specify a valid size!";
 			RoleType role = (RoleType)roleId;
 			if (args[0] == "*")
 			{
 				foreach (Player player in Server.Players)
 				{
-					Map.SpawnDummyModel(player.Position, player.RotationQuaternion, role, x, y, z);
+					player.SpawnDummy(role, new Vector3(x, y, z));
 				}
 				return $"Succesfully spawned a dummy model of {role} at all players.";
 			}
+
 			Player ply = args[0].GetPlayer();
-			if (ply == null)
-				return "An error occured: Player is null.";
-			Map.SpawnDummyModel(ply.Position, ply.RotationQuaternion, role, x, y, z);
+			if (ply == null) return "Player not found.";
+			ply.SpawnDummy(role, new Vector3(x, y, z));
 			return $"Succesfully spawned a dummy model of {role} at {ply.Nick}";
 		}
 	}
@@ -372,29 +317,24 @@ namespace Vigilance.Registered
 	public class CommandWorkbench : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: swp <player/*> <x> <y> <z>";
-
 		public string Command => "spawnworkbench";
-
 		public string Aliases => "swb";
 
         public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 4)
-				return Usage;
-			if (!float.TryParse(args[1], out float x) || !float.TryParse(args[2], out float y) || !float.TryParse(args[3], out float z))
-				return "Please specify a valid size!";
+			if (args.Length < 4) return Usage;
+			if (!float.TryParse(args[1], out float x) || !float.TryParse(args[2], out float y) || !float.TryParse(args[3], out float z)) return "Please specify a valid size!";
 			if (args[0] == "*")
 			{
 				foreach (Player player in Server.Players)
 				{
-					Prefab.WorkStation.Spawn(player.Position, player.RotationQuaternion, new Vector3(x, y, z));
+					Prefab.WorkStation.Spawn(player.Position, player.Rotations, new Vector3(x, y, z));
 				}
 				return "Succesfully spawned a workbench at all players.";
 			}
 			Player ply = args[0].GetPlayer();
-			if (ply == null)
-				return "An error occured: Player is null.";
-			Prefab.WorkStation.Spawn(ply.Position, ply.RotationQuaternion, new Vector3(x, y, z));
+			if (ply == null) return "Player not found.";
+			Prefab.WorkStation.Spawn(ply.Position, ply.Rotations, new Vector3(x, y, z));
 			return $"Succesfully spawned a workbench at {ply.Nick}";
 		}
 	}
@@ -402,32 +342,26 @@ namespace Vigilance.Registered
 	public class CommandRocket : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: rocket <player/*> <speed>";
-
 		public string Command => "rocket";
-
 		public string Aliases => "ro rc";
 
         public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 2)
-				return Usage;
-			if (!float.TryParse(args[1], out float speed))
-				return "Please specify a valid speed value!";
+			if (args.Length < 2) return Usage;
+			if (!float.TryParse(args[1], out float speed)) return "Please specify a valid speed value!";
 			if (args[0] == "*")
 			{
 				foreach (Player ply in Server.Players)
 				{
-					if (ply.IsAlive)
-						Environment.Cache.Rocket(ply, speed);
+					if (ply.IsAlive) Utilities.Utils.Rocket(ply, speed);
 				}
+
 				return $"Succesfully launched all players into space.";
 			}
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
-			if (!player.IsAlive)
-				return $"{player.Nick} is a spectator!";
-			Environment.Cache.Rocket(player, speed);
+			if (player == null) return "Player not found.";
+			if (!player.IsAlive) return $"{player.Nick} is a spectator!";
+			Utilities.Utils.Rocket(player, speed);
 			return $"Succesfully launched {player.Nick} into space";
 		}
 	}
@@ -435,17 +369,13 @@ namespace Vigilance.Registered
 	public class CommandScale : CommandHandler
 	{
 		public string Usage => "Missing arguments!\nUsage: scale <player/*all> <x> <y> <z>";
-
 		public string Command => "scale";
-
 		public string Aliases => "size resize rsz sc";
 
         public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 4)
-				return Usage;
-			if (!float.TryParse(args[1], out float x) || !float.TryParse(args[2], out float y) || !float.TryParse(args[3], out float z))
-				return "Please specify a valid size!";
+			if (args.Length < 4) return Usage;
+			if (!float.TryParse(args[1], out float x) || !float.TryParse(args[2], out float y) || !float.TryParse(args[3], out float z)) return "Please specify a valid size!";
 			if (args[0] == "*")
 			{
 				foreach (Player ply in Server.Players)
@@ -455,8 +385,7 @@ namespace Vigilance.Registered
 				return "Succesfully changed size of all players.";
 			}
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			player.Scale = new Vector3(x, y, z);
 			return $"Succesfully changed size of {player.Nick}";
 		}
@@ -465,18 +394,14 @@ namespace Vigilance.Registered
     public class CommandChangeUnit : CommandHandler
     {
 		public string Command => "changeunit";
-
 		public string Usage => "Missing arguments!\nUsage: changeunit <player> <new unit>";
-
 		public string Aliases => "changeunit cu chu";
 
         public string Execute(Player sender, string[] args)
         {
-			if (args.Length < 2)
-				return Usage;
+			if (args.Length < 2) return Usage;
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			string unit = args.SkipWords(1);
 			player.NtfUnit = unit;
 			return $"Succesfully set unit of {player.Nick} to {player.NtfUnit}";
@@ -491,8 +416,7 @@ namespace Vigilance.Registered
 
 		public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 2)
-				return Usage;
+			if (args.Length < 2) return Usage;
 			string name = args[0];
 			string url = args[1];
 			Paths.DownloadPlugin(url, name);
@@ -508,8 +432,7 @@ namespace Vigilance.Registered
 
 		public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 2)
-				return Usage;
+			if (args.Length < 2) return Usage;
 			string name = args[0];
 			string url = args[1];
 			Paths.DownloadDependency(url, name);
@@ -520,15 +443,12 @@ namespace Vigilance.Registered
 	public class CommandAddUnit : CommandHandler
 	{
 		public string Command => "addunit";
-
 		public string Usage => "Missing arguments!\nUsage: addunit <name>";
-
 		public string Aliases => "au";
 
 		public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 1)
-				return Usage;
+			if (args.Length < 1) return Usage;
 			string name = args.Combine();
 			Round.AddUnit(name, Respawning.SpawnableTeamType.ChaosInsurgency);
 			Round.AddUnit(name, Respawning.SpawnableTeamType.NineTailedFox);
@@ -539,15 +459,12 @@ namespace Vigilance.Registered
 	public class CommandUnban : GameCommandHandler
 	{
 		public string Command => "unban";
-
 		public string Usage => "Missing arguments!\nUsage: unban <nick/userId>";
-
 		public string Aliases => "uban";
 
 		public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 1)
-				return Usage;
+			if (args.Length < 1) return Usage;
 			string nick = args[0].ToLower();
 			long expiery = 0;
 			List<BanDetails> IpBans = BanHandler.GetBans(BanHandler.BanType.IP);
@@ -600,25 +517,22 @@ namespace Vigilance.Registered
 					return $"Succesfully unbanned UserID: {UserIdBan.Id} [{UserIdBan.OriginalName}]";
 				}
 			}
-			return $"";
+
+			return $"Succesfully unbanned.";
 		}
 	}
 
 	public class CommandOban : GameCommandHandler
 	{
 		public string Command => "offlineban";
-
 		public string Usage => "Missing arguments!\nUsage: oban <UserID/IP> <Duration> <DurationType> <Reason>";
-
 		public string Aliases => "oban";
 
 		public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 3)
-				return Usage;
+			if (args.Length < 3) return Usage;
 			string id = args[0];
-			if (!int.TryParse(args[1], out int duration))
-				return "Please provide a valid duration!";
+			if (!int.TryParse(args[1], out int duration)) return "Please provide a valid duration!";
 			DurationType durationType = args[2].GetDurationType();
 			string reason = args.SkipWords(3);
 			reason = string.IsNullOrEmpty(reason) ? "No reason provided." : reason;
@@ -626,8 +540,7 @@ namespace Vigilance.Registered
 			if (ulong.TryParse(id, out ulong userId))
 			{
 				userIdType = userId.GetIdType();
-				if (userIdType == UserIdType.Unspecified)
-					return "Provide a valid UserID.";
+				if (userIdType == UserIdType.Unspecified) return "Provide a valid UserID.";
 				string Id = userIdType == UserIdType.Steam ? $"{id}@steam" : $"{id}@discord";
 				Server.IssueOfflineBan(durationType, duration, Id, sender.Nick, reason);
 				return $"Succesfully banned UserID: \"{Id}\" for {durationType.GetDurationTypeString(duration)}. Reason: {reason}";
@@ -643,22 +556,17 @@ namespace Vigilance.Registered
     public class CommandPos : CommandHandler
     {
 		public string Command => "position";
-
 		public string Usage => "position <add/get/set> <player> <value>";
-
 		public string Aliases => "pos";
 
 		public string Execute(Player sender, string[] args)
 		{
-			if (args.Length < 2)
-				return Usage;
+			if (args.Length < 2) return Usage;
 			Player player = args[1].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			switch (args[0].ToLower())
 			{
-				case "get":
-					return $"Position of {player.Nick}: \n[X: {player.Position.x} | Y: {player.Position.y} | Z: {player.Position.z}]\nZone: {player.CurrentRoom.Zone}\nRoom: {player.CurrentRoom.Type}\nPocket Dimension?: {player.IsInPocketDimension.ToString().ToLower()}";
+				case "get": return $"Position of {player.Nick}: \n[X: {player.Position.x} | Y: {player.Position.y} | Z: {player.Position.z}]\nZone: {player.Room.Zone}\nRoom: {player.Room.Type}\nPocket Dimension?: {player.IsInPocketDimension.ToString().ToLower()}";
 				case "set":
 					Vector3 pos = CommandPos.ParsePosition(args[2]);
 					player.Teleport(pos);
@@ -667,8 +575,7 @@ namespace Vigilance.Registered
 					Vector3 newPos = CommandPos.ParseAdd(args[2], player);
 					player.Hub.playerMovementSync.OverridePosition(newPos, sender.Hub.transform.position.y);
 					return $"Succesfully updated {player.Nick}'s position. [X: {newPos.x} | Y: {newPos.y} | Z: {newPos.z}]";
-				default:
-					return "Please specify a valid operation! [get/set/add]";
+				default: return "Please specify a valid operation! [get/set/add]";
 			}
 		}
 
@@ -696,14 +603,10 @@ namespace Vigilance.Registered
         {
 			Vector3 curPos = player.Position;
 			string[] args = s.Split('=');
-			if (!float.TryParse(args[1], out float value))
-				return curPos;
-			if (args[0].ToLower() == "x")
-				curPos.x += value;
-			if (args[0].ToLower() == "y")
-				curPos.y += value;
-			if (args[0].ToLower() == "z")
-				curPos.z += value;
+			if (!float.TryParse(args[1], out float value)) return curPos;
+			if (args[0].ToLower() == "x") curPos.x += value;
+			if (args[0].ToLower() == "y") curPos.y += value;
+			if (args[0].ToLower() == "z") curPos.z += value;
 			return curPos;
         }
     }
@@ -711,18 +614,14 @@ namespace Vigilance.Registered
     public class CommandGhost : CommandHandler
     {
 		public string Command => "ghost";
-
 		public string Usage => "ghost <player>";
-
 		public string Aliases => "invis gh";
 
         public string Execute(Player sender, string[] args)
         {
-			if (args.Length < 1)
-				return Usage;
+			if (args.Length < 1) return Usage;
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			bool value = !player.IsInvisible;
 			player.IsInvisible = value;
 			return $"Succesfully set ghostmode of {player.Nick} to {value.ToString().ToLower()}";
@@ -732,21 +631,16 @@ namespace Vigilance.Registered
     public class CommandTargetGhost : CommandHandler
     {
 		public string Command => "targetghost";
-
 		public string Usage => "Missing arguments!\nUsage: targetghost <player> <playerThatFirstPlayerCannotSee>";
-
 		public string Aliases => "tghost targetinvis tinvis tg";
 
         public string Execute(Player sender, string[] args)
         {
-            if (args.Length < 2)
-				return Usage;
+            if (args.Length < 2)return Usage;
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			Player two = args[1].GetPlayer();
-			if (two == null)
-				return "An error occured: Player is null.";
+			if (two == null) return "Player not found.";
 			if (Ghostmode.GetTargets(player).Contains(two))
             {
 				Ghostmode.RemoveTarget(player, two);
@@ -763,18 +657,14 @@ namespace Vigilance.Registered
 	public class CommandSpawnPrefab : CommandHandler
     {
 		public string Command => "spawnprefab";
-
 		public string Usage => "spawnprefab <player/*> <scale [X=Y=Z]> <prefab name>";
-
 		public string Aliases => "sp";
 
         public string Execute(Player sender, string[] args)
         {
-			if (args.Length < 3)
-				return Usage;
+			if (args.Length < 3) return Usage;
 			Prefab prefab = args.SkipWords(2).GetPrefab();
-			if (prefab == Prefab.None)
-				return $"An error occured: Prefab is none.";
+			if (prefab == Prefab.None) return $"Prefab not found.";
 			Vector3 scale = CommandPos.ParsePosition(args[1]);
 			if (args[0].ToLower() == "all" || args[0] == "*")
             {
@@ -782,7 +672,7 @@ namespace Vigilance.Registered
                 {
 					if (ply.IsAlive)
                     {
-						prefab.Spawn(ply.Position, ply.RotationQuaternion, scale);
+						prefab.Spawn(ply.Position, ply.Rotations, scale);
                     }
                 }
 				return $"Succesfully spawned {prefab} at all players.";
@@ -790,11 +680,10 @@ namespace Vigilance.Registered
 			else
             {
 				Player player = args[0].GetPlayer();
-				if (player == null)
-					return "An error occured: Player is null.";
+				if (player == null) return "Player not found.";
 				if (player.IsAlive)
 				{
-					prefab.Spawn(player.Position, player.RotationQuaternion, scale);
+					prefab.Spawn(player.Position, player.Rotations, scale);
 					return $"Succesfully spawned {prefab} at {player.Nick}";
 				}
 				else
@@ -808,32 +697,26 @@ namespace Vigilance.Registered
     public class CommandExplode : CommandHandler
     {
         public string Command => "explode";
-
 		public string Usage => "explode <player/*> <force = 1>";
-
 		public string Aliases => "";
 
         public string Execute(Player sender, string[] args)
         {
-			if (args.Length < 1)
-				return Usage;
+			if (args.Length < 1) return Usage;
 			float force;
-			if (!float.TryParse(args[1], out force))
-				force = 1f;
+			if (!float.TryParse(args[1], out force)) force = 1f;
 			if (args[0] == "*")
             {
 				foreach (Player player in Server.Players)
                 {
-					if (player.IsAlive)
-						player.Explode(force);
+					if (player.IsAlive) player.Explode(force);
                 }
 				return $"Succesfully spawned an explosion at all players.";
             }
 			else
             {
 				Player player = args[0].GetPlayer();
-				if (player == null)
-					return "An error occured: Player is null.";
+				if (player == null) return "Player not found.";
 				if (player.IsAlive)
 				{
 					player.Explode(force);
@@ -866,8 +749,7 @@ namespace Vigilance.Registered
 
         public string Execute(Player sender, string[] args)
         {
-			if (RoundSummary.roundTime < 5)
-				return "The round has not been started yet!";
+			if (RoundSummary.roundTime < 1) return "The round has not been started yet!";
 			RoundSummary.RoundLock = false;
 			RoundSummary.singleton.ForceEnd();
 			return "Done! Forced round end.";
@@ -882,8 +764,7 @@ namespace Vigilance.Registered
 
         public string Execute(Player sender, string[] args)
         {
-			if (args.Length < 1)
-				return Usage;
+			if (args.Length < 1) return Usage;
 			string userId = args[0];
 			if (Server.AddReservedSlot(userId))
             {
@@ -907,8 +788,7 @@ namespace Vigilance.Registered
         {
 			IEnumerable<CommandHandler> commands = CommandManager.Commands.Values;
 			string str = $"Commands ({commands.Count()}):\n";
-			foreach (CommandHandler commandHandler in commands)
-				str += $"{commandHandler.Command}\n";
+			foreach (CommandHandler commandHandler in commands) str += $"{commandHandler.Command}\n";
 			return str;
         }
     }
@@ -948,8 +828,7 @@ namespace Vigilance.Registered
 			if (args.Length < 2)
 				return Usage;
 			string message = args.SkipWords(1);
-			if (!int.TryParse(args[0], out int duration))
-				return "Please provide a valid duration.";
+			if (!int.TryParse(args[0], out int duration)) return "Please provide a valid duration.";
 			Map.ShowHint(message, duration);
 			return "Succesfully sent a hint.";
         }
@@ -963,13 +842,10 @@ namespace Vigilance.Registered
 
         public string Execute(Player sender, string[] args)
         {
-			if (args.Length < 3)
-				return Usage;
-			if (!int.TryParse(args[1], out int duration))
-				return "Please provide a valid duration.";
+			if (args.Length < 3) return Usage;
+			if (!int.TryParse(args[1], out int duration)) return "Please provide a valid duration.";
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			string message = args.SkipWords(2);
 			string str = $"<color=#FF0000>[PERSONAL] - {sender.Nick}:</color>\n<i>{message}</i>";
 			player.ShowHint(str, duration);
@@ -985,14 +861,11 @@ namespace Vigilance.Registered
 
         public string Execute(Player sender, string[] args)
         {
-			if (args.Length < 2)
-				return Usage;
+			if (args.Length < 2) return Usage;
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			Achievement achievement = args[1].GetAchievement();
-			if (achievement == Achievement.Unknown)
-				return "Cannot find an achievement with that name.";
+			if (achievement == Achievement.Unknown) return "Cannot find an achievement with that name.";
 			player.Achieve(achievement);
 			return $"{player.Nick} succesfuly achieved {achievement}";
         }
@@ -1006,16 +879,12 @@ namespace Vigilance.Registered
 
         public string Execute(Player sender, string[] args)
         {
-			if (args.Length < 3)
-				return Usage;
+			if (args.Length < 3) return Usage;
 			Player player = args[0].GetPlayer();
-			if (player == null)
-				return "An error occured: Player is null.";
+			if (player == null) return "Player not found.";
 			ItemType type = args[1].GetItem();
 			Vector3 pos = CommandPos.ParsePosition(args[2]);
-			if (pos == Vector3.zero)
-				return "An error occured: Vector is null.";
-			GameObject obj = Prefab.Pickup.Spawn(player.Position, sender.RotationQuaternion, pos);
+			GameObject obj = Prefab.Pickup.Spawn(player.Position, sender.Rotations, pos);
 			Pickup pickup = obj.GetComponent<Pickup>();
 			if (pickup != null)
 			{
@@ -1035,12 +904,11 @@ namespace Vigilance.Registered
 
         public string Execute(Player sender, string[] args)
         {
-			if (args.Length < 1)
-				return Usage;
+			if (args.Length < 1) return Usage;
 			string s = "";
 			if (args[0].ToLower() == "item")
             {
-				foreach (ItemType item in Environment.GetValues<ItemType>())
+				foreach (ItemType item in Utilities.Utils.GetValues<ItemType>())
                 {
 					if (string.IsNullOrEmpty(s))
                     {
@@ -1066,7 +934,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "role")
             {
-				foreach (RoleType item in Environment.GetValues<RoleType>())
+				foreach (RoleType item in Utilities.Utils.GetValues<RoleType>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1079,7 +947,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "damagetype")
 			{
-				foreach (DamageType item in Environment.GetValues<DamageType>())
+				foreach (DamageType item in Utilities.Utils.GetValues<DamageType>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1092,7 +960,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "durationtype")
 			{
-				foreach (DurationType item in Environment.GetValues<DurationType>())
+				foreach (DurationType item in Utilities.Utils.GetValues<DurationType>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1105,7 +973,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "grenadetype")
 			{
-				foreach (GrenadeType item in Environment.GetValues<GrenadeType>())
+				foreach (GrenadeType item in Utilities.Utils.GetValues<GrenadeType>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1118,7 +986,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "useridtype")
 			{
-				foreach (UserIdType item in Environment.GetValues<UserIdType>())
+				foreach (UserIdType item in Utilities.Utils.GetValues<UserIdType>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1131,7 +999,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "teamtype")
 			{
-				foreach (TeamType item in Environment.GetValues<TeamType>())
+				foreach (TeamType item in Utilities.Utils.GetValues<TeamType>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1144,7 +1012,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "team")
 			{
-				foreach (Team item in Environment.GetValues<Team>())
+				foreach (Team item in Utilities.Utils.GetValues<Team>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1157,7 +1025,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "zonetype")
 			{
-				foreach (ZoneType item in Environment.GetValues<ZoneType>())
+				foreach (ZoneType item in Utilities.Utils.GetValues<ZoneType>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1170,7 +1038,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "roomtype")
 			{
-				foreach (RoomType item in Environment.GetValues<RoomType>())
+				foreach (RoomType item in Utilities.Utils.GetValues<RoomType>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1183,7 +1051,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "weapontype")
 			{
-				foreach (WeaponType item in Environment.GetValues<WeaponType>())
+				foreach (WeaponType item in Utilities.Utils.GetValues<WeaponType>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1196,7 +1064,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "ammotype")
 			{
-				foreach (AmmoType item in Environment.GetValues<AmmoType>())
+				foreach (AmmoType item in Utilities.Utils.GetValues<AmmoType>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1209,7 +1077,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "prefab")
 			{
-				foreach (Prefab item in Environment.GetValues<Prefab>())
+				foreach (Prefab item in Utilities.Utils.GetValues<Prefab>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1222,7 +1090,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "achievement")
 			{
-				foreach (Achievement item in Environment.GetValues<Achievement>())
+				foreach (Achievement item in Utilities.Utils.GetValues<Achievement>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1248,7 +1116,7 @@ namespace Vigilance.Registered
 
 			if (args[0].ToLower() == "infoarea")
 			{
-				foreach (PlayerInfoArea item in Environment.GetValues<PlayerInfoArea>())
+				foreach (PlayerInfoArea item in Utilities.Utils.GetValues<PlayerInfoArea>())
 				{
 					if (string.IsNullOrEmpty(s))
 					{
@@ -1270,8 +1138,7 @@ namespace Vigilance.Registered
 
         public string Execute(Player sender, string[] args)
         {
-			if (args.Length < 1)
-				return Usage;
+			if (args.Length < 1) return Usage;
 			Room room = Map.GetRoom(args[1]);
 			Rid rid = Map.GetRoomID(args[1]);
 			RoomInformation info = Map.GetRoomInformation(args[1]);
@@ -1311,8 +1178,7 @@ namespace Vigilance.Registered
 			else
             {
 				Player player = args[0].GetPlayer();
-				if (player == null)
-					return "An error occured: Player is null.";
+				if (player == null) return "An error occured: Player is null.";
 				if (room == null)
 				{
 					if (rid != null)
@@ -1324,7 +1190,7 @@ namespace Vigilance.Registered
                     {
 						if (info != null)
                         {
-							player.Teleport(Environment.FindSafePosition(info.transform.position));
+							player.Teleport(Utilities.Utils.FindSafePosition(info.transform.position));
 							return $"Succesfully teleported {player.Nick} to {info.name}";
 						}
                     }

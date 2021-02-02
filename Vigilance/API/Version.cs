@@ -18,8 +18,7 @@
             Minor = minor;
             API = api;
             Letter = let;
-            if (!string.IsNullOrEmpty(let))
-                IsTesting = true;
+            if (!string.IsNullOrEmpty(let)) IsTesting = true;
             IsBeta = beta;
         }
 

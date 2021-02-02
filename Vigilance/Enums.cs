@@ -61,6 +61,7 @@
 		Discord,
 		Northwood,
 		Patreon,
+		LocalPlayer,
 		Unspecified
 	}
 

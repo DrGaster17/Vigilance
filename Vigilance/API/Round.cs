@@ -26,7 +26,8 @@ namespace Vigilance.API
             LobbyLock = false;
             RoundSummary.singleton.ForceEnd();
         }
-        public static void Restart() => Environment.Cache.LocalStats.Roundrestart();
+
+        public static void Restart() => Utilities.Utils.LocalStats.Roundrestart();
 
         public static void AddUnit(string unit, SpawnableTeamType teamType = SpawnableTeamType.NineTailedFox)
         {
@@ -40,10 +41,8 @@ namespace Vigilance.API
 
         public static void SetSpeed(float value)
         {
-            if (_sprintSpeed == 0f)
-                _sprintSpeed = ServerConfigSynchronizer.Singleton.NetworkHumanSprintSpeedMultiplier;
-            if (_walkSpeed == 0f)
-                _walkSpeed = ServerConfigSynchronizer.Singleton.NetworkHumanWalkSpeedMultiplier;
+            if (_sprintSpeed == 0f) _sprintSpeed = ServerConfigSynchronizer.Singleton.NetworkHumanSprintSpeedMultiplier;
+            if (_walkSpeed == 0f) _walkSpeed = ServerConfigSynchronizer.Singleton.NetworkHumanWalkSpeedMultiplier;
             ServerConfigSynchronizer.Singleton.NetworkHumanSprintSpeedMultiplier = value;
             ServerConfigSynchronizer.Singleton.NetworkHumanWalkSpeedMultiplier = value / 1.5f;
         }

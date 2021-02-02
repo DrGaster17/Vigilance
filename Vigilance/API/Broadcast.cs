@@ -21,8 +21,7 @@
         {
             get
             {
-                if (_bc == null)
-                    _bc = PlayerManager.localPlayer.GetComponent<global::Broadcast>();
+                if (_bc == null) _bc = PlayerManager.localPlayer.GetComponent<global::Broadcast>();
                 return _bc;
             }
         }

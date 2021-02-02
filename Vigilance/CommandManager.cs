@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Vigilance.API;
 using Vigilance.Extensions;
-using Vigilance.Registered;
+using Vigilance.Commands;
 
 namespace Vigilance
 {
@@ -62,31 +62,28 @@ namespace Vigilance
 
         public static void UnregisterCommand(string command)
         {
-            if (string.IsNullOrEmpty(command))
-                return;
+            if (string.IsNullOrEmpty(command)) return;
             command = command.ToUpper();
             CommandHandler commandHandler = GetCommandHandler(command);
             GameCommandHandler gameCommandHandler = GetGameCommandHandler(command);
             ConsoleCommandHandler consoleCommandHandler = GetConsoleCommandHandler(command);
-            if (commandHandler != null)
-                Commands.Remove(command);
-            if (gameCommandHandler != null)
-                GameCommands.Remove(command);
-            if (consoleCommandHandler != null)
-                ConsoleCommands.Remove(command);
+            if (commandHandler != null) Commands.Remove(command);
+            if (gameCommandHandler != null) GameCommands.Remove(command);
+            if (consoleCommandHandler != null) ConsoleCommands.Remove(command);
         }
 
         public static CommandHandler GetCommandHandler(string command)
         {
             foreach (CommandHandler handler in Commands.Values)
             {
-                if (handler.Command.ToUpper() == command.ToUpper())
-                    return handler;
+                if (handler.Command.ToUpper() == command.ToUpper()) return handler;
                 else
+                {
                     if (!handler.Aliases.IsEmpty())
-                    foreach (string alias in GetAliases(handler))
-                        if (alias.ToUpper() == command.ToUpper())
-                            return handler;
+                        foreach (string alias in GetAliases(handler))
+                            if (alias.ToUpper() == command.ToUpper())
+                                return handler;
+                }
             }
             return null;
         }
@@ -121,31 +118,52 @@ namespace Vigilance
             return null;
         }
 
-        public static bool CallCommand(Player sender, string[] query, out string reply)
+        public static bool CallCommand(Player sender, string[] query, out string reply, out string color)
         {
             CommandHandler handler = GetCommandHandler(query[0].ToUpper());
             GameCommandHandler gch = GetGameCommandHandler(query[0].ToUpper());
+            ConsoleCommandHandler cch = GetConsoleCommandHandler(query[0].ToUpper());
 
-            if (handler != null)
+            try
             {
-                reply = $"{query[0].ToUpper()}#{handler.Execute(sender, query.SkipCommand())}";
-                return true;
-            }
+                if (handler != null)
+                {
+                    reply = $"{query[0].ToUpper()}#{handler.Execute(sender, query.SkipCommand())}";
+                    color = "";
+                    return true;
+                }
 
-            if (gch != null)
+                if (gch != null)
+                {
+                    reply = $"{query[0].ToUpper()}#{gch.Execute(sender, query.SkipCommand())}";
+                    color = "";
+                    return true;
+                }
+
+                if (cch != null)
+                {
+                    reply = $"{query[0].ToUpper()}#{cch.Execute(sender, query.SkipCommand(), out color)}";
+                    return true;
+                }
+
+                if (HandlerExists(query[0].ToUpper()))
+                {
+                    reply = "SERVER#An error occured while executing this command.";
+                    color = "";
+                    return false;
+                }
+
+                reply = "SERVER#Unknown command!";
+                color = "red";
+                return false;
+            }
+            catch (System.Exception e)
             {
-                reply = $"{query[0].ToUpper()}#{gch.Execute(sender, query.SkipCommand())}";
-                return true;
+                Log.Add(e);
+                color = "red";
+                reply = e.ToString();
+                return false;
             }
-
-            if (HandlerExists(query[0].ToUpper()))
-            {
-                reply = "SERVER#An error occured while executing this command.";
-                return true;
-            }
-
-            reply = "SERVER#Unknown command!";
-            return false;
         }
 
         public static bool HandlerExists(string command)
@@ -168,6 +186,17 @@ namespace Vigilance
                 else
                     if (!gch.Aliases.IsEmpty())
                     foreach (string alias in GetAliases(gch))
+                        if (alias.ToUpper() == command.ToUpper())
+                            return true;
+            }
+
+            foreach (ConsoleCommandHandler cch in GameCommands.Values)
+            {
+                if (cch.Command.ToUpper() == command.ToUpper())
+                    return true;
+                else
+                    if (!cch.Aliases.IsEmpty())
+                    foreach (string alias in GetAliases(cch))
                         if (alias.ToUpper() == command.ToUpper())
                             return true;
             }

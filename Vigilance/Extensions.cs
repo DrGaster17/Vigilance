@@ -11,19 +11,10 @@ using Interactables.Interobjects.DoorUtils;
 using Dissonance.Integrations.MirrorIgnorance;
 using Interactables.Interobjects;
 using Respawning;
+using Vigilance.Utilities;
 
 namespace Vigilance.Extensions
 {
-	public static class MethodExtensions
-	{
-		public static void InvokeStaticMethod(this Type type, string methodName, object[] param)
-		{
-			BindingFlags flags = BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public;
-			MethodInfo info = type.GetMethod(methodName, flags);
-			info?.Invoke(null, param);
-		}
-	}
-
 	public static class CameraExtensions
     {
 		public static readonly Dictionary<int, Enums.CameraType> Types = new Dictionary<int, Enums.CameraType>();
@@ -38,8 +29,7 @@ namespace Vigilance.Extensions
 			Types.Clear();
 			Rooms.Clear();
 			var cameras = Map.Cameras;
-			if (cameras == null)
-				return;
+			if (cameras == null) return;
 			var cameraCount = cameras.Count;
 			for (int i = 0; i < cameraCount; i++)
 			{
@@ -49,12 +39,9 @@ namespace Vigilance.Extensions
 				if (camera != null && camera.gameObject != null)
 				{
 					var room = Map.FindParentRoom(camera.gameObject);
-					if (!Rooms.ContainsKey(cameraID))
-						Rooms.Add(cameraID, room);
+					if (!Rooms.ContainsKey(cameraID)) Rooms.Add(cameraID, room);
 				}
-
-				if (!Types.ContainsKey(cameraID))
-					Types.Add(cameraID, cameraType);
+				if (!Types.ContainsKey(cameraID)) Types.Add(cameraID, cameraType);
 			}
 		}
 	}
@@ -76,8 +63,7 @@ namespace Vigilance.Extensions
 			Types.Clear();
 			Doors.Clear();
 			var doors = Map.FindObjects<DoorVariant>();
-			if (doors == null)
-				return;
+			if (doors == null) return;
 			var doorCount = doors.Count;
 			for (int i = 0; i < doorCount; i++)
 			{
@@ -88,105 +74,59 @@ namespace Vigilance.Extensions
 				var doorType = GetDoorType(doorName);
 				var doorRoom = Map.FindParentRoom(door.gameObject);
 				var doorObject = new API.Door(door, doorRoom, doorType, doorID, doorName);
-				if (!Types.ContainsKey(doorID))
-					Types.Add(doorID, doorType);
-				if (!Doors.ContainsKey(doorID))
-					Doors.Add(doorID, doorObject);
-				if (doorType == DoorType.CheckpointEntrance)
-					API.Door.CheckpointEZ = doorObject;
-				if (doorType == DoorType.CheckpointLczA)
-					API.Door.CheckpointA = doorObject;
-				if (doorType == DoorType.CheckpointLczB)
-					API.Door.CheckpointB = doorObject;
-				if (doorType == DoorType.Scp173)
-					API.Door.Scp173Gate = doorObject;
+				if (!Types.ContainsKey(doorID)) Types.Add(doorID, doorType);
+				if (!Doors.ContainsKey(doorID)) Doors.Add(doorID, doorObject);
+				if (doorType == DoorType.CheckpointEntrance) API.Door.CheckpointEZ = doorObject;
+				if (doorType == DoorType.CheckpointLczA) API.Door.CheckpointA = doorObject;
+				if (doorType == DoorType.CheckpointLczB) API.Door.CheckpointB = doorObject;
+				if (doorType == DoorType.Scp173) API.Door.Scp173Gate = doorObject;
 			}
 		}
 
-		public static DoorType GetDoorType(string doorName)
+		public static DoorType GetDoorType(this string doorName)
 		{
 			switch (doorName)
 			{
-				case "012":
-					return DoorType.Scp012;
-				case "012_BOTTOM":
-					return DoorType.Scp012Bottom;
-				case "012_LOCKER":
-					return DoorType.Scp012Locker;
-				case "049_ARMORY":
-					return DoorType.Scp049Armory;
-				case "079_FIRST":
-					return DoorType.Scp079First;
-				case "079_SECOND":
-					return DoorType.Scp079Second;
-				case "096":
-					return DoorType.Scp096;
-				case "106_BOTTOM":
-					return DoorType.Scp106Bottom;
-				case "106_PRIMARY":
-					return DoorType.Scp106Primary;
-				case "106_SECONDARY":
-					return DoorType.Scp106Secondary;
-				case "173":
-					return DoorType.Scp173;
-				case "173_ARMORY":
-					return DoorType.Scp173Armory;
-				case "173_BOTTOM":
-					return DoorType.Scp173Bottom;
-				case "372":
-					return DoorType.Scp372;
-				case "914":
-					return DoorType.Scp914;
-				case "Airlocks":
-					return DoorType.Airlocks;
-				case "CHECKPOINT_ENT":
-					return DoorType.CheckpointEntrance;
-				case "CHECKPOINT_LCZ_A":
-					return DoorType.CheckpointLczA;
-				case "CHECKPOINT_LCZ_B":
-					return DoorType.CheckpointLczB;
-				case "ContDoor":
-					return DoorType.ContDoor;
-				case "EntrDoor":
-					return DoorType.EntranceDoor;
-				case "ESCAPE":
-					return DoorType.Escape;
-				case "ESCAPE_INNER":
-					return DoorType.EscapeInner;
-				case "GATE_A":
-					return DoorType.GateA;
-				case "GATE_B":
-					return DoorType.GateB;
-				case "HCZ_ARMORY":
-					return DoorType.HczArmory;
-				case "HeavyContainmentDoor":
-					return DoorType.HeavyContainmentDoor;
-				case "HID":
-					return DoorType.HID;
-				case "HID_LEFT":
-					return DoorType.HIDLeft;
-				case "HID_RIGHT":
-					return DoorType.HIDRight;
-				case "INTERCOM":
-					return DoorType.Intercom;
-				case "LCZ_ARMORY":
-					return DoorType.LczArmory;
-				case "LCZ_CAFE":
-					return DoorType.LczCafe;
-				case "LCZ_WC":
-					return DoorType.LczWc;
-				case "LightContainmentDoor":
-					return DoorType.LightContainmentDoor;
-				case "NUKE_ARMORY":
-					return DoorType.NukeArmory;
-				case "NUKE_SURFACE":
-					return DoorType.NukeSurface;
-				case "PrisonDoor":
-					return DoorType.PrisonDoor;
-				case "SURFACE_GATE":
-					return DoorType.SurfaceGate;
-				default:
-					return DoorType.UnknownDoor;
+				case "012": return DoorType.Scp012;
+				case "012_BOTTOM": return DoorType.Scp012Bottom;
+				case "012_LOCKER": return DoorType.Scp012Locker;
+				case "049_ARMORY": return DoorType.Scp049Armory;
+				case "079_FIRST": return DoorType.Scp079First;
+				case "079_SECOND": return DoorType.Scp079Second;
+				case "096": return DoorType.Scp096;
+				case "106_BOTTOM": return DoorType.Scp106Bottom;
+				case "106_PRIMARY": return DoorType.Scp106Primary;
+				case "106_SECONDARY": return DoorType.Scp106Secondary;
+				case "173": return DoorType.Scp173;
+				case "173_ARMORY": return DoorType.Scp173Armory;
+				case "173_BOTTOM": return DoorType.Scp173Bottom;
+				case "372": return DoorType.Scp372;
+				case "914": return DoorType.Scp914;
+				case "Airlocks": return DoorType.Airlocks;
+				case "CHECKPOINT_ENT": return DoorType.CheckpointEntrance;
+				case "CHECKPOINT_LCZ_A": return DoorType.CheckpointLczA;
+				case "CHECKPOINT_LCZ_B": return DoorType.CheckpointLczB;
+				case "ContDoor": return DoorType.ContDoor;
+				case "EntrDoor": return DoorType.EntranceDoor;
+				case "ESCAPE": return DoorType.Escape;
+				case "ESCAPE_INNER": return DoorType.EscapeInner;
+				case "GATE_A": return DoorType.GateA;
+				case "GATE_B": return DoorType.GateB;
+				case "HCZ_ARMORY": return DoorType.HczArmory;
+				case "HeavyContainmentDoor": return DoorType.HeavyContainmentDoor;
+				case "HID": return DoorType.HID;
+				case "HID_LEFT": return DoorType.HIDLeft;
+				case "HID_RIGHT": return DoorType.HIDRight;
+				case "INTERCOM": return DoorType.Intercom;
+				case "LCZ_ARMORY": return DoorType.LczArmory;
+				case "LCZ_CAFE": return DoorType.LczCafe;
+				case "LCZ_WC": return DoorType.LczWc;
+				case "LightContainmentDoor": return DoorType.LightContainmentDoor;
+				case "NUKE_ARMORY": return DoorType.NukeArmory;
+				case "NUKE_SURFACE": return DoorType.NukeSurface;
+				case "PrisonDoor": return DoorType.PrisonDoor;
+				case "SURFACE_GATE": return DoorType.SurfaceGate;
+				default: return DoorType.UnknownDoor;
 			}
 		}
 	}
@@ -196,9 +136,7 @@ namespace Vigilance.Extensions
 		public static Player GetAttacker(this PlayerStats.HitInfo hitInfo)
 		{
 			Player player = hitInfo.RHub.GetPlayer();
-			if (player == null)
-				player = Server.PlayerList.Local;
-			
+			if (player == null) player = Server.PlayerList.Local;	
 			return player;
 		}
 
@@ -210,10 +148,8 @@ namespace Vigilance.Extensions
 		public static DamageType GetDamageInfo(this PlayerStats.HitInfo info)
         {
 			string attacker = info.Attacker.ToUpper();
-			if (attacker == "CMDSUICIDE")
-				return DamageType.CmdSuicide;
-			if (attacker == "DISCONNECT")
-				return DamageType.Disconnect;
+			if (attacker == "CMDSUICIDE") return DamageType.CmdSuicide;
+			if (attacker == "DISCONNECT") return DamageType.Disconnect;
 			return info.GetDamageType().AsDamageType();
         }
 	}
@@ -222,74 +158,41 @@ namespace Vigilance.Extensions
 	{
 		public static DamageType AsDamageType(this DamageTypes.DamageType dmgType)
 		{
-			if (string.IsNullOrEmpty(dmgType.name))
-				return DamageType.None;
+			if (string.IsNullOrEmpty(dmgType.name)) return DamageType.None;
 			switch (dmgType.name)
 			{
-				case "NONE":
-					return DamageType.None;
-				case "LURE":
-					return DamageType.Lure;
-				case "NUKE":
-					return DamageType.Nuke;
-				case "WALL":
-					return DamageType.Wall;
-				case "DECONT":
-					return DamageType.Decontamination;
-				case "TESLA":
-					return DamageType.Tesla;
-				case "FALLDOWN":
-					return DamageType.Falldown;
-				case "Flying detection":
-					return DamageType.AntiCheat;
-				case "Friendly fire detector":
-					return DamageType.FriendlyFireDetector;
-				case "RECONTAINMENT":
-					return DamageType.Recontainment;
-				case "BLEEDING":
-					return DamageType.Bleeding;
-				case "POISONED":
-					return DamageType.Poison;
-				case "ASPHYXIATION":
-					return DamageType.Asphyxiation;
-				case "CONTAIN":
-					return DamageType.Containment;
-				case "POCKET":
-					return DamageType.PocketDimension;
-				case "RAGDOLL-LESS":
-					return DamageType.Ragdolless;
-				case "Com15":
-					return DamageType.COM15;
-				case "P90":
-					return DamageType.P90;
-				case "E11 Standard Rifle":
-					return DamageType.Epsilon11;
-				case "MP7":
-					return DamageType.MP7;
-				case "Logicier":
-					return DamageType.Logicer;
-				case "USP":
-					return DamageType.USP;
-				case "MicroHID":
-					return DamageType.MicroHID;
-				case "GRENADE":
-					return DamageType.FragGrenade;
-				case "SCP-049":
-					return DamageType.Scp049;
-				case "SCP-049-2":
-					return DamageType.Scp0492;
-				case "SCP-096":
-					return DamageType.Scp096;
-				case "SCP-106":
-					return DamageType.Scp106;
-				case "SCP-173":
-					return DamageType.Scp173;
-				case "SCP-939":
-					return DamageType.Scp939;
-				case "SCP-207":
-					return DamageType.Scp207;
-				default:
-					return DamageType.None;
+				case "NONE": return DamageType.None;
+				case "LURE": return DamageType.Lure;
+				case "NUKE": return DamageType.Nuke;
+				case "WALL": return DamageType.Wall;
+				case "DECONT": return DamageType.Decontamination;
+				case "TESLA": return DamageType.Tesla;
+				case "FALLDOWN": return DamageType.Falldown;
+				case "Flying detection": return DamageType.AntiCheat;
+				case "Friendly fire detector": return DamageType.FriendlyFireDetector;
+				case "RECONTAINMENT": return DamageType.Recontainment;
+				case "BLEEDING": return DamageType.Bleeding;
+				case "POISONED": return DamageType.Poison;
+				case "ASPHYXIATION": return DamageType.Asphyxiation;
+				case "CONTAIN": return DamageType.Containment;
+				case "POCKET": return DamageType.PocketDimension;
+				case "RAGDOLL-LESS": return DamageType.Ragdolless;
+				case "Com15": return DamageType.COM15;
+				case "P90": return DamageType.P90;
+				case "E11 Standard Rifle": return DamageType.Epsilon11;
+				case "MP7": return DamageType.MP7;
+				case "Logicier": return DamageType.Logicer;
+				case "USP": return DamageType.USP;
+				case "MicroHID": return DamageType.MicroHID;
+				case "GRENADE": return DamageType.FragGrenade;
+				case "SCP-049": return DamageType.Scp049;
+				case "SCP-049-2": return DamageType.Scp0492;
+				case "SCP-096": return DamageType.Scp096;
+				case "SCP-106": return DamageType.Scp106;
+				case "SCP-173": return DamageType.Scp173;
+				case "SCP-939": return DamageType.Scp939;
+				case "SCP-207": return DamageType.Scp207;
+				default: return DamageType.None;
 			}
 		}
 	}
@@ -300,14 +203,12 @@ namespace Vigilance.Extensions
         {
 			foreach (Player player in Server.Players)
             {
-				if (player.Ragdolls.Contains(ragdoll))
-					return player;
+				if (player.Ragdolls.Contains(ragdoll)) return player;
             }
 
 			foreach (Player player in Server.Players)
             {
-				if (player.PlayerId == ragdoll.owner.PlayerId)
-					return player;
+				if (player.PlayerId == ragdoll.owner.PlayerId) return player;
             }
 
 			return null;
@@ -328,30 +229,26 @@ namespace Vigilance.Extensions
 			sender.SendRemoteAdminMessage(message, "server");
 		}
 
+		public static void SendRemoteAdminMessage(this Player player, string message)
+		{
+			player.Hub.queryProcessor._sender.RaReply($"SERVER#{message}", true, true, string.Empty);
+		}
+	}
+
+	public static class PlayerExtensions
+	{
 		public static Player GetPlayer(this CommandSender sender)
 		{
 			string id = sender.SenderId;
-			if (id == "SERVER CONSOLE" && sender.Nickname == "SERVER CONSOLE")
-				return Environment.Cache.LocalPlayer;
-			if (id == "Sitrep")
-				return Environment.Cache.LocalPlayer;
-			if (sender.Nickname == "Sitrep")
-				return Environment.Cache.LocalPlayer;
+			if (id == "SERVER CONSOLE" && sender.Nickname == "SERVER CONSOLE") return Utilities.Utils.LocalPlayer;
+			if (id == "Sitrep") return Utilities.Utils.LocalPlayer;
+			if (sender.Nickname == "Sitrep") return Utilities.Utils.LocalPlayer;
 			foreach (Player player in Server.PlayerList.Players.Values)
 			{
 				if (player.UserId == sender.SenderId)
 					return player;
 			}
 			return null;
-		}
-	}
-
-
-	public static class PlayerExtensions
-	{
-		public static void SendRemoteAdminMessage(this Player player, string message)
-		{
-			player.Hub.queryProcessor._sender.RaReply($"SERVER#{message}", true, true, string.Empty);
 		}
 
 		public static Player GetPlayer(this GameObject gameObject)
@@ -424,65 +321,6 @@ namespace Vigilance.Extensions
 				return false;
 		}
 
-		public static void RefreshModel(this CharacterClassManager ccm, RoleType classId = RoleType.None)
-        {
-			ReferenceHub hub = ReferenceHub.LocalHub;
-			hub.GetComponent<AnimationController>().OnChangeClass();
-			if (ccm.MyModel != null)
-			{
-				UnityEngine.Object.Destroy(ccm.MyModel);
-			}
-			Role role = ccm.Classes.SafeGet((classId < RoleType.Scp173) ? ccm.CurClass : classId);
-			if (role.team != Team.RIP)
-			{
-				GameObject gameObject = UnityEngine.Object.Instantiate(role.model_player, ccm.gameObject.transform, true);
-				gameObject.transform.localPosition = role.model_offset.position;
-				gameObject.transform.localRotation = Quaternion.Euler(role.model_offset.rotation);
-				gameObject.transform.localScale = role.model_offset.scale;
-				ccm.MyModel = gameObject;
-				AnimationController component = hub.GetComponent<AnimationController>();
-				if (ccm.MyModel.GetComponent<Animator>() != null)
-				{
-					component.animator = ccm.MyModel.GetComponent<Animator>();
-				}
-				FootstepSync component2 = ccm.GetComponent<FootstepSync>();
-				FootstepHandler component3 = ccm.MyModel.GetComponent<FootstepHandler>();
-				if (component2 != null)
-				{
-					component2.FootstepHandler = component3;
-				}
-				if (component3 != null)
-				{
-					component3.FootstepSync = component2;
-					component3.AnimationController = component;
-				}
-				if (ccm.isLocalPlayer)
-				{
-					if (ccm.MyModel.GetComponent<Renderer>() != null)
-					{
-						ccm.MyModel.GetComponent<Renderer>().enabled = false;
-					}
-					Renderer[] componentsInChildren = ccm.MyModel.GetComponentsInChildren<Renderer>();
-					for (int i = 0; i < componentsInChildren.Length; i++)
-					{
-						componentsInChildren[i].enabled = false;
-					}
-					foreach (Collider collider in ccm.MyModel.GetComponentsInChildren<Collider>())
-					{
-						if (collider.name != "LookingTarget")
-						{
-							collider.enabled = false;
-						}
-					}
-				}
-			}
-			ccm.GetComponent<CapsuleCollider>().enabled = (role.team != Team.RIP);
-			if (ccm.MyModel != null)
-			{
-				ccm.GetComponent<WeaponManager>().hitboxes = ccm.MyModel.GetComponentsInChildren<HitboxIdentity>(true);
-			}
-		}
-
 		public static List<Player> GetPlayers(this RoleType role)
 		{
 			return Server.PlayerList.GetPlayers(role);
@@ -493,8 +331,45 @@ namespace Vigilance.Extensions
 			return Server.PlayerList.GetPlayers(team);
 		}
 
-		public static Vector3 FindLookRotation(this Vector3 player, Vector3 target) => (target - player).normalized;
-		public static bool IsSteam(this UserIdType idType) => idType != UserIdType.Discord && idType != UserIdType.Unspecified;
+		public static void RefreshModel(this CharacterClassManager ccm, RoleType classId = RoleType.None)
+		{
+			ReferenceHub hub = ReferenceHub.LocalHub;
+			hub.GetComponent<AnimationController>().OnChangeClass();
+			if (ccm.MyModel != null) UnityEngine.Object.Destroy(ccm.MyModel);
+			Role role = ccm.Classes.SafeGet((classId < RoleType.Scp173) ? ccm.CurClass : classId);
+			if (role.team != Team.RIP)
+			{
+				GameObject gameObject = UnityEngine.Object.Instantiate(role.model_player, ccm.gameObject.transform, true);
+				gameObject.transform.localPosition = role.model_offset.position;
+				gameObject.transform.localRotation = Quaternion.Euler(role.model_offset.rotation);
+				gameObject.transform.localScale = role.model_offset.scale;
+				ccm.MyModel = gameObject;
+				AnimationController component = hub.GetComponent<AnimationController>();
+				if (ccm.MyModel.GetComponent<Animator>() != null) component.animator = ccm.MyModel.GetComponent<Animator>();
+				FootstepSync component2 = ccm.GetComponent<FootstepSync>();
+				FootstepHandler component3 = ccm.MyModel.GetComponent<FootstepHandler>();
+				if (component2 != null) component2.FootstepHandler = component3;
+				if (component3 != null)
+				{
+					component3.FootstepSync = component2;
+					component3.AnimationController = component;
+				}
+
+				if (ccm.isLocalPlayer)
+				{
+					if (ccm.MyModel.GetComponent<Renderer>() != null) ccm.MyModel.GetComponent<Renderer>().enabled = false;
+					Renderer[] componentsInChildren = ccm.MyModel.GetComponentsInChildren<Renderer>();
+					for (int i = 0; i < componentsInChildren.Length; i++) componentsInChildren[i].enabled = false;
+					foreach (Collider collider in ccm.MyModel.GetComponentsInChildren<Collider>())
+					{
+						if (collider.name != "LookingTarget") collider.enabled = false;
+					}
+				}
+			}
+
+			ccm.GetComponent<CapsuleCollider>().enabled = (role.team != Team.RIP);
+			if (ccm.MyModel != null) ccm.GetComponent<WeaponManager>().hitboxes = ccm.MyModel.GetComponentsInChildren<HitboxIdentity>(true);
+		}
 	}
 
 	public static class BanDetailsExtensions
@@ -556,116 +431,9 @@ namespace Vigilance.Extensions
 		}
 	}
 
-	public static class StringExtensions
-	{
-		public static string Remove(this string str, string toRemove) => str.Replace(toRemove, "");
-
-		public static string AsString(this Vector3 vec) => $"[X: {vec.x} | Y: {vec.y} | Z: {vec.z}]";
-
-		public static bool IsValidChance(this int rnd, int chance)
-		{
-			if (chance >= rnd)
-				return true;
-			else
-				return false;
-		}
-
-		public static string RemoveBracketsOnEndOfName(this string name)
-		{
-			var bracketStart = name.IndexOf('(') - 1;
-			if (bracketStart > 0)
-				name = name.Remove(bracketStart, name.Length - bracketStart);
-			return name;
-		}
-
-		public static string SkipWords(this string[] array, int amount)
-		{
-			return array.Skip(amount).ToArray().Combine();
-		}
-
-		public static string DiscordSanitize(this string str)
-		{
-			if (string.IsNullOrEmpty(str))
-				return "";
-			return str.Replace('@', ' ').Replace('_', ' ').Replace('*', ' ').Replace('<', ' ').Replace('`', ' ').Replace('>', ' ').Replace('|', ' ');
-		}
-
-		public static string[] SkipCommand(this string[] array)
-		{
-			return array.Skip(1).ToArray();
-		}
-
-		public static string AsString(this List<string> list)
-        {
-			string s = "";
-			foreach (string item in list)
-            {
-				if (string.IsNullOrEmpty(s))
-                {
-					s += item;
-                }
-				else
-                {
-					s += $", {item}";
-                }
-            }
-			return s;
-        }
-
-		public static int GetDistance(this string firstString, string secondString)
-		{
-			int n = firstString.Length;
-			int m = secondString.Length;
-			int[,] d = new int[n + 1, m + 1];
-			if (n == 0)
-				return m;
-			if (m == 0)
-				return n;
-			for (int i = 0; i <= n; d[i, 0] = i++)
-			{ }
-			for (int j = 0; j <= m; d[0, j] = j++)
-			{ }
-			for (int i = 1; i <= n; i++)
-			{
-				for (int j = 1; j <= m; j++)
-				{
-					int cost = (secondString[j - 1] == firstString[i - 1]) ? 0 : 1;
-					d[i, j] = Math.Min(Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1), d[i - 1, j - 1] + cost);
-				}
-			}
-			return d[n, m];
-		}
-
-		public static bool IsEmpty(this string str)
-		{
-			if (string.IsNullOrEmpty(str) || str.ToLower() == "none")
-				return true;
-			else
-				return false;
-		}
-
-		public static string Combine(this string[] array)
-		{
-			return string.Join(" ", array);
-		}
-
-		public static string[] ToArray(this char[] arr)
-		{
-			List<string> strings = new List<string>();
-			foreach (char s in arr)
-			{
-				strings.Add(s.ToString());
-			}
-			return strings.ToArray();
-		}
-
-		public static string RemoveNumbers(this string str)
-		{
-			return str.Where(s => !s.IsNumber()).ToArray().ToArray().Combine();
-		}
-
-		public static bool IsNumber(this char ch) => int.TryParse(ch.ToString(), out int idk);
-		public static bool IsNumber(this string str) => int.TryParse(str, out int idk);
+	public static class EnumExtensions
+    {
+		public static bool IsSteam(this UserIdType idType) => idType != UserIdType.Discord && idType != UserIdType.Unspecified;
 
 		public static DurationType GetDurationTypeWithDuration(this string str)
 		{
@@ -705,25 +473,30 @@ namespace Vigilance.Extensions
 		}
 
 		public static KeycardPermissions[] GetPermissions(this string[] array)
-        {
+		{
 			List<KeycardPermissions> perms = new List<KeycardPermissions>();
 			foreach (string perm in array)
-            {
-				if (DoorPermissionUtils.BackwardsCompatibilityPermissions.TryGetValue(perm, out KeycardPermissions value))
-				{
-					perms.Add(value);
-				}
-            }
+			{
+				if (DoorPermissionUtils.BackwardsCompatibilityPermissions.TryGetValue(perm, out KeycardPermissions value)) perms.Add(value);
+			}
 			return perms.ToArray();
-        }
+		}
 
 		public static UserIdType GetIdType(this ulong id)
 		{
-			if (id.ToString().Length == 17)
-				return UserIdType.Steam;
-			if (id.ToString().Length == 18)
-				return UserIdType.Discord;
+			if (id.ToString().Length == 17) return UserIdType.Steam;
+			if (id.ToString().Length == 18) return UserIdType.Discord;
 			return UserIdType.Unspecified;
+		}
+
+		public static string GetName(this Prefab prefab)
+		{
+			if (prefab == Prefab.GrenadeFlash) return "Grenade Flash";
+			if (prefab == Prefab.GrenadeFrag) return "Grenade Frag";
+			if (prefab == Prefab.GrenadeScp018) return "Grenade SCP-018";
+			if (prefab == Prefab.Scp096_Ragdoll) return "SCP-096_Ragdoll";
+			if (prefab == Prefab.WorkStation) return "Work Station";
+			return prefab.ToString();
 		}
 
 		public static string GetDurationTypeString(this DurationType durationType, int dur)
@@ -778,51 +551,25 @@ namespace Vigilance.Extensions
 			return $"{dur} {durationType}";
 		}
 
-		public static string GetName(this Prefab prefab)
-        {
-			if (prefab == Prefab.GrenadeFlash)
-				return "Grenade Flash";
-			if (prefab == Prefab.GrenadeFrag)
-				return "Grenade Frag";
-			if (prefab == Prefab.GrenadeScp018)
-				return "Grenade SCP-018";
-			if (prefab == Prefab.Scp096_Ragdoll)
-				return "SCP-096_Ragdoll";
-			if (prefab == Prefab.WorkStation)
-				return "Work Station";
-			return prefab.ToString();
-        }
-
 		public static GameObject GetObject(this Prefab prefab)
-        {
-			foreach (GameObject obj in NetworkManager.singleton.spawnPrefabs)
-				if (obj.name == prefab.GetName())
-					return obj;
+		{
+			foreach (GameObject obj in NetworkManager.singleton.spawnPrefabs) if (obj.name == prefab.GetName()) return obj;
 			return null;
-        }
+		}
 
 		public static GameObject Spawn(this Prefab prefab, Vector3 position, Quaternion rotation, Vector3 scale)
-        {
+		{
 			GameObject toInstantiate = prefab.GetObject();
 			GameObject clone = UnityEngine.Object.Instantiate(toInstantiate);
 			clone.transform.localScale = scale;
 			clone.transform.position = position;
 			clone.transform.rotation = rotation;
 			NetworkServer.Spawn(clone);
-			if (prefab == Prefab.WorkStation)
-			{
-				Offset offset = new Offset()
-				{
-					position = position,
-					rotation = rotation.eulerAngles,
-					scale = scale
-				};
-			}
 			return clone;
-        }
+		}
 
 		public static Prefab GetPrefab(this string str)
-        {
+		{
 			if (int.TryParse(str, out int index))
 				return (Prefab)index;
 			if (str == "Player")
@@ -864,10 +611,10 @@ namespace Vigilance.Extensions
 			if (str == "Grenade SCP-018")
 				return Prefab.GrenadeScp018;
 			return Prefab.None;
-        }	
-		
+		}
+
 		public static RoleType GetRole(this string str)
-        {
+		{
 			if (int.TryParse(str, out int id))
 				return (RoleType)id;
 			str = str.ToLower();
@@ -910,10 +657,10 @@ namespace Vigilance.Extensions
 			if (str == "tutorial")
 				return RoleType.Tutorial;
 			return RoleType.None;
-        }
+		}
 
 		public static ItemType GetItem(this string str)
-        {
+		{
 			if (int.TryParse(str, out int id))
 				return (ItemType)id;
 			str = str.ToLower();
@@ -992,10 +739,10 @@ namespace Vigilance.Extensions
 			if (str == "tablet" || str == "weaponmanagertablet")
 				return ItemType.WeaponManagerTablet;
 			return ItemType.None;
-        }
+		}
 
 		public static TeamType GetTeam(this string str)
-        {
+		{
 			if (int.TryParse(str, out int id))
 				return (TeamType)id;
 			str = str.ToLower();
@@ -1016,10 +763,10 @@ namespace Vigilance.Extensions
 			if (str == "none")
 				return TeamType.None;
 			return TeamType.None;
-        }
+		}
 
 		public static WeaponType GetWeapon(this string str)
-        {
+		{
 			if (int.TryParse(str, out int id))
 				return (WeaponType)id;
 			str = str.ToLower();
@@ -1040,10 +787,10 @@ namespace Vigilance.Extensions
 			if (str == "usp")
 				return WeaponType.USP;
 			return WeaponType.None;
-        }
+		}
 
 		public static AmmoType GetAmmoType(this string str)
-        {
+		{
 			if (int.TryParse(str, out int id))
 				return (AmmoType)id;
 			if (str == "5mm")
@@ -1053,35 +800,29 @@ namespace Vigilance.Extensions
 			if (str == "9mm")
 				return AmmoType.Nato_9mm;
 			return AmmoType.None;
-        }
-	}
+		}
 
-	public static class EnumExtensions
-    {
 		public static Achievement GetAchievement(this string str)
-        {
-			IEnumerable<Achievement> achievements = Environment.GetValues<Achievement>();
+		{
+			IEnumerable<Achievement> achievements = Utilities.Utils.GetValues<Achievement>();
 			foreach (Achievement achievement in achievements)
-            {
+			{
 				if (achievement.ToString().ToLower() == str.ToLower())
 					return achievement;
-            }
+			}
 			return Achievement.Unknown;
-        }
+		}
 
 		public static T GetEnum<T>(this string str)
-        {
-			foreach (T t in Environment.GetValues<T>())
-            {
+		{
+			foreach (T t in Utilities.Utils.GetValues<T>())
+			{
 				if (t.ToString().ToLower() == str.ToLower())
 					return t;
-            }
+			}
 			return default;
-        }
-    }
+		}
 
-	public static class RoleExtensions
-	{
 		public static string AsString(this RoleType role)
 		{
 			switch (role)
@@ -1198,9 +939,165 @@ namespace Vigilance.Extensions
 					return TeamType.Spectator;
 			}
 		}
+
+		public static WeaponType GetWeaponType(this ItemType item)
+		{
+			if (item == ItemType.GunCOM15)
+				return WeaponType.Com15;
+			if (item == ItemType.GunE11SR)
+				return WeaponType.Epsilon11;
+			if (item == ItemType.GunLogicer)
+				return WeaponType.Logicer;
+			if (item == ItemType.GunMP7)
+				return WeaponType.MP7;
+			if (item == ItemType.GunProject90)
+				return WeaponType.Project90;
+			if (item == ItemType.GunUSP)
+				return WeaponType.USP;
+			if (item == ItemType.MicroHID)
+				return WeaponType.MicroHID;
+			return WeaponType.None;
+		}
+
+		public static AmmoType GetWeaponAmmoType(this WeaponType weapon)
+		{
+			if (weapon == WeaponType.Com15)
+				return AmmoType.Nato_9mm;
+			if (weapon == WeaponType.Epsilon11)
+				return AmmoType.Nato_5mm;
+			if (weapon == WeaponType.Logicer)
+				return AmmoType.Nato_7mm;
+			if (weapon == WeaponType.MP7)
+				return AmmoType.Nato_7mm;
+			if (weapon == WeaponType.Project90)
+				return AmmoType.Nato_9mm;
+			if (weapon == WeaponType.USP)
+				return AmmoType.Nato_9mm;
+			return AmmoType.None;
+		}
+
+		public static GrenadeType GetGrenadeType(this ItemType item)
+		{
+			if (item == ItemType.GrenadeFlash)
+				return GrenadeType.FlashGrenade;
+			if (item == ItemType.GrenadeFrag)
+				return GrenadeType.FragGrenade;
+			if (item == ItemType.SCP018)
+				return GrenadeType.Scp018;
+			return GrenadeType.None;
+		}
+
+		public static bool IsWeapon(this ItemType item) => item.GetWeaponType() != WeaponType.None;
+		public static bool IsAmmo(this ItemType item) => item == ItemType.Ammo556 || item == ItemType.Ammo9mm || item == ItemType.Ammo762;
+		public static bool IsSCP(this ItemType type) => type == ItemType.SCP018 || type == ItemType.SCP500 || type == ItemType.SCP268 || type == ItemType.SCP207;
+		public static bool IsThrowable(this ItemType type) => type == ItemType.SCP018 || type == ItemType.GrenadeFrag || type == ItemType.GrenadeFlash;
+		public static bool IsMedical(this ItemType type) => type == ItemType.Painkillers || type == ItemType.Medkit || type == ItemType.SCP500 || type == ItemType.Adrenaline;
+		public static bool IsUtility(this ItemType type) => type == ItemType.Disarmer || type == ItemType.Flashlight || type == ItemType.Radio || type == ItemType.WeaponManagerTablet;
+		public static bool IsKeycard(this ItemType type) => type == ItemType.KeycardChaosInsurgency || type == ItemType.KeycardContainmentEngineer || type == ItemType.KeycardFacilityManager || type == ItemType.KeycardGuard || type == ItemType.KeycardJanitor || type == ItemType.KeycardNTFCommander || type == ItemType.KeycardNTFLieutenant || type == ItemType.KeycardO5 || type == ItemType.KeycardScientist || type == ItemType.KeycardScientistMajor || type == ItemType.KeycardSeniorGuard || type == ItemType.KeycardZoneManager;
 	}
 
-	public static class Config
+	public static class StructExtensions
+    {
+		public static string AsString(this Vector3 vec) => $"[X: {vec.x} | Y: {vec.y} | Z: {vec.z}]";
+	}
+
+	public static class StringExtensions
+	{
+		public static string Remove(this string str, string toRemove) => str.Replace(toRemove, "");
+
+		public static string RemoveBracketsOnEndOfName(this string name)
+		{
+			var bracketStart = name.IndexOf('(') - 1;
+			if (bracketStart > 0)
+				name = name.Remove(bracketStart, name.Length - bracketStart);
+			return name;
+		}
+
+		public static string SkipWords(this string[] array, int amount)
+		{
+			return array.Skip(amount).ToArray().Combine();
+		}
+
+		public static string DiscordSanitize(this string str)
+		{
+			if (string.IsNullOrEmpty(str))
+				return "";
+			return str.Replace('@', ' ').Replace('_', ' ').Replace('*', ' ').Replace('<', ' ').Replace('`', ' ').Replace('>', ' ').Replace('|', ' ');
+		}
+
+		public static string[] SkipCommand(this string[] array)
+		{
+			return array.Skip(1).ToArray();
+		}
+
+		public static string AsString(this List<string> list)
+        {
+			string s = "";
+			foreach (string item in list)
+            {
+				if (string.IsNullOrEmpty(s))
+                {
+					s += item;
+                }
+				else
+                {
+					s += $", {item}";
+                }
+            }
+			return s;
+        }
+
+		public static int GetDistance(this string firstString, string secondString)
+		{
+			int n = firstString.Length;
+			int m = secondString.Length;
+			int[,] d = new int[n + 1, m + 1];
+			if (n == 0) return m;
+			if (m == 0) return n;
+			for (int i = 0; i <= n; d[i, 0] = i++) { }
+			for (int j = 0; j <= m; d[0, j] = j++) { }
+			for (int i = 1; i <= n; i++)
+			{
+				for (int j = 1; j <= m; j++)
+				{
+					int cost = (secondString[j - 1] == firstString[i - 1]) ? 0 : 1;
+					d[i, j] = Math.Min(Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1), d[i - 1, j - 1] + cost);
+				}
+			}
+
+			return d[n, m];
+		}
+
+		public static bool IsEmpty(this string str)
+		{
+			if (string.IsNullOrEmpty(str) || str.ToLower() == "none") return true; else return false;
+		}
+
+		public static string Combine(this string[] array)
+		{
+			return string.Join(" ", array);
+		}
+
+		public static string[] ToArray(this char[] arr)
+		{
+			List<string> strings = new List<string>();
+			foreach (char s in arr)
+			{
+				strings.Add(s.ToString());
+			}
+			return strings.ToArray();
+		}
+
+		public static string RemoveNumbers(this string str)
+		{
+			return str.Where(s => !s.IsNumber()).ToArray().ToArray().Combine();
+		}
+
+		public static bool IsNumber(this char ch) => int.TryParse(ch.ToString(), out int idk);
+		public static bool IsNumber(this string str) => int.TryParse(str, out int idk);
+	}
+
+	public static class ConfigExtensions
     {
 		public static ItemType GetItem(this YamlConfig cfg, string key) => cfg.GetString(key).GetItem();
 		public static RoleType GetRole(this YamlConfig cfg, string key) => cfg.GetString(key).GetRole();
@@ -1364,64 +1261,6 @@ namespace Vigilance.Extensions
 				mono = false;
 			return new API.Broadcast(duration, txt, mono);
 		}
-	}
-
-	public static class ItemExtensions
-    {
-		public static WeaponType GetWeaponType(this ItemType item)
-        {
-			if (item == ItemType.GunCOM15)
-				return WeaponType.Com15;
-			if (item == ItemType.GunE11SR)
-				return WeaponType.Epsilon11;
-			if (item == ItemType.GunLogicer)
-				return WeaponType.Logicer;
-			if (item == ItemType.GunMP7)
-				return WeaponType.MP7;
-			if (item == ItemType.GunProject90)
-				return WeaponType.Project90;
-			if (item == ItemType.GunUSP)
-				return WeaponType.USP;
-			if (item == ItemType.MicroHID)
-				return WeaponType.MicroHID;
-			return WeaponType.None;
-        }
-
-		public static AmmoType GetWeaponAmmoType(this WeaponType weapon)
-		{
-			if (weapon == WeaponType.Com15)
-				return AmmoType.Nato_9mm;
-			if (weapon == WeaponType.Epsilon11)
-				return AmmoType.Nato_5mm;
-			if (weapon == WeaponType.Logicer)
-				return AmmoType.Nato_7mm;
-			if (weapon == WeaponType.MP7)
-				return AmmoType.Nato_7mm;
-			if (weapon == WeaponType.Project90)
-				return AmmoType.Nato_9mm;
-			if (weapon == WeaponType.USP)
-				return AmmoType.Nato_9mm;
-			return AmmoType.None;
-		}
-
-		public static GrenadeType GetGrenadeType(this ItemType item)
-        {
-			if (item == ItemType.GrenadeFlash)
-				return GrenadeType.FlashGrenade;
-			if (item == ItemType.GrenadeFrag)
-				return GrenadeType.FragGrenade;
-			if (item == ItemType.SCP018)
-				return GrenadeType.Scp018;
-			return GrenadeType.None;
-        }
-
-		public static bool IsWeapon(this ItemType item) => item.GetWeaponType() != WeaponType.None;
-		public static bool IsAmmo(this ItemType item) => item == ItemType.Ammo556 || item == ItemType.Ammo9mm || item == ItemType.Ammo762;
-		public static bool IsSCP(this ItemType type) => type == ItemType.SCP018 || type == ItemType.SCP500 || type == ItemType.SCP268 || type == ItemType.SCP207;
-		public static bool IsThrowable(this ItemType type) => type == ItemType.SCP018 || type == ItemType.GrenadeFrag || type == ItemType.GrenadeFlash;
-		public static bool IsMedical(this ItemType type) => type == ItemType.Painkillers || type == ItemType.Medkit || type == ItemType.SCP500 || type == ItemType.Adrenaline;
-		public static bool IsUtility(this ItemType type) => type == ItemType.Disarmer || type == ItemType.Flashlight || type == ItemType.Radio || type == ItemType.WeaponManagerTablet;
-		public static bool IsKeycard(this ItemType type) => type == ItemType.KeycardChaosInsurgency || type == ItemType.KeycardContainmentEngineer || type == ItemType.KeycardFacilityManager || type == ItemType.KeycardGuard || type == ItemType.KeycardJanitor || type == ItemType.KeycardNTFCommander || type == ItemType.KeycardNTFLieutenant || type == ItemType.KeycardO5 || type == ItemType.KeycardScientist || type == ItemType.KeycardScientistMajor || type == ItemType.KeycardSeniorGuard || type == ItemType.KeycardZoneManager;
 	}
 
 	public static class LogExtensions

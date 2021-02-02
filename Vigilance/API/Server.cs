@@ -27,7 +27,7 @@ namespace Vigilance.API
         {
             if (safeRestart)
             {
-                Environment.Cache.LocalStats.Roundrestart();
+                Utilities.Utils.LocalStats.Roundrestart();
                 Timing.CallDelayed(1f, () => Application.Quit());
             }
             else
@@ -36,17 +36,17 @@ namespace Vigilance.API
 
         public static bool Ban(Player player, int duration)
         {
-            return Environment.Cache.LocalBan.BanUser(player.GameObject, duration, "No reason given.", "Server");
+            return Utilities.Utils.LocalBan.BanUser(player.GameObject, duration, "No reason given.", "Server");
         }
 
         public static bool Ban(Player player, int duration, string message)
         {
-            return Environment.Cache.LocalBan.BanUser(player.GameObject, duration, message, "Server");
+            return Utilities.Utils.LocalBan.BanUser(player.GameObject, duration, message, "Server");
         }
 
         public static bool Ban(Player player, int duration, string reason, string issuer)
         {
-            return Environment.Cache.LocalBan.BanUser(player.GameObject, duration, reason, issuer);
+            return Utilities.Utils.LocalBan.BanUser(player.GameObject, duration, reason, issuer);
         }
 
         public static void Kick(Player player)

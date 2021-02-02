@@ -7,7 +7,7 @@ namespace Vigilance.Patches.Features
     {
         public static void Postfix(Pickup __instance)
         {
-            Environment.Rotate(__instance);
+            Vigilance.Utilities.Utils.Rotate(__instance);
         }
     }
 }

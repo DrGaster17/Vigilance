@@ -6,7 +6,7 @@ using System;
 using System.Net;
 using Vigilance.API;
 
-namespace Vigilance
+namespace Vigilance.Utilities
 {
 	public static class Paths
 	{
@@ -24,18 +24,12 @@ namespace Vigilance
 		public static string HarmonyDownloadURL => "https://github.com/DrGaster17/Vigilance/releases/download/v5.5.4/0Harmony.dll";
 		public static string NewtonsoftDownloadURL => "https://github.com/DrGaster17/Vigilance/releases/download/v5.5.4/Newtonsoft.Json.dll";
 
-		public static DirectoryInfo Create(string directory)
-		{
-			DirectoryInfo info = Directory.CreateDirectory(directory);
-			Log.Add("Paths", $"Creating directory {directory}", LogType.Debug);
-			return info;
-		}
+		public static DirectoryInfo Create(string directory) => Directory.CreateDirectory(directory);
 
 		public static void CreateFile(string path)
         {
 			if (!File.Exists(path))
             {
-				Log.Add("Paths", $"Creating file {path}", LogType.Debug);
 				FileStream stream = File.Create(path);
 				stream.Close();
             }
@@ -43,25 +37,16 @@ namespace Vigilance
 
 		public static void CheckMainConfig()
 		{
-			if (!Directory.Exists(ConfigsPath))
-				Directory.CreateDirectory(ConfigsPath);
-			if (!File.Exists(ConfigPath))
-			{
-				File.Create(ConfigPath).Close();
-			}
+			if (!Directory.Exists(ConfigsPath)) Directory.CreateDirectory(ConfigsPath);
+			if (!File.Exists(ConfigPath)) File.Create(ConfigPath).Close();
 		}
 
-		public static void Delete(string directory)
-		{
-			Directory.Delete(directory);
-			Log.Add("Paths", $"Deleting directory {directory}", LogType.Debug);
-		}
+		public static void Delete(string directory) => Directory.Delete(directory);
 
 		public static void Check(string directory)
 		{
 			if (!Directory.Exists(directory))
 			{
-				Log.Add("Paths", $"Directory {directory} does not exist", LogType.Debug);
 				Create(directory);
 			}
 		}
@@ -98,72 +83,12 @@ namespace Vigilance
 			CheckFile(ConfigPath);
 		}
 
-		public static List<Assembly> GetAssemblies(string path)
-		{
-			try
-			{
-				List<Assembly> assemblies = new List<Assembly>();
-				if (string.IsNullOrEmpty(path))
-					return assemblies;
-				if (!Directory.Exists(path))
-					return assemblies;
-				Log.Add("Paths", $"Loading assemblies in {path}", LogType.Debug);
-				foreach (string f in Directory.GetFiles(path))
-				{
-					if (f.EndsWith(".dll"))
-					{
-						try
-						{
-							Assembly a = Assembly.LoadFrom(f);
-							assemblies.Add(a);
-						}
-						catch (Exception e)
-                        {
-							Log.Add("Paths", e);
-                        }
-					}
-				}
-				return assemblies;
-			}
-			catch (Exception e)
-			{
-				Log.Add("Paths", e);
-				return new List<Assembly>();
-			}
-		}
-
 		public static void CheckPluginConfig(Dictionary<string, string> configs, string path)
 		{
 			if (!File.Exists(path))
 			{
 				File.Create(path).Close();
 			}
-		}
-
-		public static byte[] GetBytes(Assembly assembly)
-		{
-			FileStream fileStream = File.Open(assembly.Location, FileMode.Open);
-			byte[] result;
-			using (MemoryStream memoryStream = new MemoryStream())
-			{
-				fileStream.CopyTo(memoryStream);
-				result = memoryStream.ToArray();
-			}
-			fileStream.Close();
-			return result;
-		}
-
-		public static byte[] GetBytes(string path)
-        {
-			FileStream fileStream = File.Open(path, FileMode.Open);
-			byte[] result;
-			using (MemoryStream memoryStream = new MemoryStream())
-			{
-				fileStream.CopyTo(memoryStream);
-				result = memoryStream.ToArray();
-			}
-			fileStream.Close();
-			return result;
 		}
 
 		public static void CheckDependencies()
@@ -227,8 +152,8 @@ namespace Vigilance
 									{
 										try
 										{
-											string cfg = Paths.GetPluginConfigPath(plugin);
-											Paths.CheckFile(path);
+											string cfg = GetPluginConfigPath(plugin);
+											CheckFile(path);
 											plugin.Config = new YamlConfig(cfg);
 											plugin.Enable();
 											PluginManager.Plugins.Add(path, plugin);

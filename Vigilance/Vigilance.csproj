@@ -103,7 +103,7 @@
     <Compile Include="API\Version.cs" />
     <Compile Include="CommandManager.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Environment.cs" />
+    <Compile Include="Utilities.cs" />
     <Compile Include="EventHandlers\EventHandlers.cs" />
     <Compile Include="EventManager.cs" />
     <Compile Include="Events\Events.cs" />
