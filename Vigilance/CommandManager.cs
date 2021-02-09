@@ -190,7 +190,7 @@ namespace Vigilance
                             return true;
             }
 
-            foreach (ConsoleCommandHandler cch in GameCommands.Values)
+            foreach (ConsoleCommandHandler cch in ConsoleCommands.Values)
             {
                 if (cch.Command.ToUpper() == command.ToUpper())
                     return true;
