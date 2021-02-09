@@ -14,7 +14,9 @@ namespace Vigilance.API
 {
 	public static class Map
 	{
-		public static IEnumerable<Room> Rooms => Utilities.Utils.GetRooms();
+		private static List<Room> _rooms;
+
+		public static IEnumerable<Room> Rooms => GetRooms();
 		public static IEnumerable<Door> Doors => DoorExtensions.Doors.Values;
 		public static IEnumerable<WorkStation> WorkStations => FindObjects<WorkStation>();
 		public static IEnumerable<Ragdoll> Ragdolls => FindObjects<Ragdoll>();
@@ -87,6 +89,7 @@ namespace Vigilance.API
 		{
 			try
 			{
+				if (Rooms == null) return null;
 				foreach (Room room in Rooms)
 				{
 					if (room.Type == roomType)
@@ -237,6 +240,29 @@ namespace Vigilance.API
         {
 			return Object.FindObjectsOfType<T>();
         }
+
+		public static List<Room> GetRooms()
+        {
+			if (_rooms == null) RefreshRooms();
+			if (_rooms.Count() < RoomIDs.Count()) RefreshRooms();
+			return _rooms;
+        }
+
+		private static void RefreshRooms()
+		{
+			try
+			{
+				if (_rooms != null) _rooms.Clear(); else { _rooms = new List<Room>(); }
+				_rooms.AddRange(GameObject.FindGameObjectsWithTag("Room").Select(r => new Room(r.name, r, r.transform.position)));
+				_rooms.Add(new Room("Root_*&*Outside Cams", GameObject.Find("Root_*&*Outside Cams"), GameObject.Find("Root_*&*Outside Cams").transform.position));
+				RoomInformation pocket = Map.FindObjects<RoomInformation>().Where(h => h.CurrentRoomType == RoomInformation.RoomType.POCKET).FirstOrDefault();
+				if (pocket != null) _rooms.Add(new Room("PocketDimension", pocket.gameObject, pocket.transform.position));
+			}
+			catch (Exception e)
+			{
+				Log.Add(e);
+			}
+		}
 
 		public static Vector3 GetRandomSpawnpoint(RoleType role) => PlayerManager.localPlayer.GetComponent<SpawnpointManager>().GetRandomPosition(role).transform.position;
 		public static void TurnOffLights(float time = 9999f, bool onlyHeavy = false) => Generators.ToList()[0].ServerOvercharge(time, onlyHeavy);

@@ -103,6 +103,7 @@
     <Compile Include="API\Version.cs" />
     <Compile Include="CommandManager.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Patches\Events\QueryProcessor_ProcessGameConsoleQuery.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="EventHandlers\EventHandlers.cs" />
     <Compile Include="EventManager.cs" />

@@ -17,7 +17,6 @@ using Mirror;
 using System.Reflection;
 using Object = UnityEngine.Object;
 using RemoteAdmin;
-using Interactables.Interobjects.DoorUtils;
 
 namespace Vigilance.Utilities
 {
@@ -28,7 +27,6 @@ namespace Vigilance.Utilities
         private static PlayerStats _pStats;
         private static CharacterClassManager _ccm;
         private static BanPlayer _banHandler;
-        private static List<Room> _rooms = null;
 
         public static readonly RaycastHit[] RaycastsCache = new RaycastHit[1];
         public static List<CoroutineHandle> ActiveCoroutines = new List<CoroutineHandle>();
@@ -62,24 +60,6 @@ namespace Vigilance.Utilities
             CustomNetworkManager.Modded = ConfigManager.MarkAsModded;
             CommandSystem.Commands.BuildInfoCommand.ModDescription = $"Vigilance v{PluginManager.Version} - a simple plugin loader and a little API for SCP: Secret Laboratory.";
         }
-
-        public static void InitRooms()
-        {
-            try
-            {
-                if (_rooms != null) _rooms.Clear(); else { _rooms = new List<Room>(); }
-                _rooms.AddRange(GameObject.FindGameObjectsWithTag("Room").Select(r => new Room(r.name, r, r.transform.position)));
-                _rooms.Add(new Room("Root_*&*Outside Cams", GameObject.Find("Root_*&*Outside Cams"), GameObject.Find("Root_*&*Outside Cams").transform.position));
-                RoomInformation pocket = Map.FindObjects<RoomInformation>().Where(h => h.CurrentRoomType == RoomInformation.RoomType.POCKET).FirstOrDefault();
-                if (pocket != null) _rooms.Add(new Room("PocketDimension", pocket.gameObject, pocket.transform.position));
-            }
-            catch (Exception e)
-            {
-                Log.Add(nameof(Utils.InitRooms), e);
-            }
-        }
-
-        public static List<Room> GetRooms() => _rooms;
 
         public static Grenade SpawnGrenade(Player player, GrenadeType grenadeType)
         {
@@ -577,7 +557,7 @@ namespace Vigilance.Utilities
             }
         }
 
-        public static void OnConsoleCommand(string cmd, Player ply, bool all, out string reply, out string color, out bool allow)
+        public static void OnConsoleCommand(string cmd, Player ply, bool all, out bool allow, out string reply, out string color)
         {
             try
             {
@@ -597,15 +577,9 @@ namespace Vigilance.Utilities
                 reply = ev.Reply;
                 color = ev.Color.ToLower();
                 allow = ev.Allow;
-
-                if (allow)
-                {
-                    CommandManager.CallCommand(ply, args, out reply, out color);
-                }
             }
             catch (Exception e)
             {
-                Log.Add("Handling", e);
                 reply = e.Message;
                 color = "red";
                 allow = all;
@@ -1153,11 +1127,10 @@ namespace Vigilance.Utilities
             {
                 EventManager.Trigger<RoundStartHandler>(new RoundStartEvent());
                 Round.CurrentState = RoundState.Started;
-                if (ConfigManager.WindowHealth != 30f)
-                    foreach (BreakableWindow window in UnityEngine.Object.FindObjectsOfType<BreakableWindow>())
-                        window.health = ConfigManager.WindowHealth == -1f ? float.MaxValue : ConfigManager.WindowHealth;
-                CameraExtensions.SetInfo();
+                if (ConfigManager.WindowHealth != 30f) foreach (BreakableWindow window in UnityEngine.Object.FindObjectsOfType<BreakableWindow>()) window.health = ConfigManager.WindowHealth == -1f ? float.MaxValue : ConfigManager.WindowHealth;
                 DoorExtensions.SetInfo();
+                CameraExtensions.SetInfo();
+                Map.GetRooms();
             }
             catch (Exception e)
             {
