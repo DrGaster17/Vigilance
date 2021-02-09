@@ -256,8 +256,7 @@ namespace Vigilance.API
 
         public void Achieve(Achievement achievement)
         {
-            if (achievement == Achievement.Unknown)
-                return;
+            if (achievement == Achievement.Unknown) return;
             if (achievement == Achievement.JustResources)
             {
                 Utilities.Utils.LocalStats?.TargetStats(Connection, "dboys_killed", "justresources", 50);

@@ -20,14 +20,10 @@
             Letter = let;
             if (!string.IsNullOrEmpty(let)) IsTesting = true;
             IsBeta = beta;
+            SetFullName();
         }
 
-        public override string ToString()
-        {
-            if (!string.IsNullOrEmpty(Letter))
-                return $"{Major}.{Minor}.{API}-{Letter}";
-            return $"{Major}.{Minor}.{API}";
-        }
+        public override string ToString() => FullName;
 
         public override int GetHashCode()
         {
@@ -37,11 +33,14 @@
         public override bool Equals(object obj)
         {
             Version v = (Version)obj;
-            if (v == null)
-                return false;
-            if (v.Major == Major && v.Minor == Minor && v.API == API && v.Letter == Letter && v.IsTesting == IsTesting && v.IsBeta == IsBeta && v.FullName == FullName)
-                return true;
+            if (v == null) return false;
+            if (v.Major == Major && v.Minor == Minor && v.API == API && v.Letter == Letter && v.IsTesting == IsTesting && v.IsBeta == IsBeta && v.FullName == FullName) return true;
             return false;
+        }
+
+        private void SetFullName()
+        {
+            if (!string.IsNullOrEmpty(Letter)) FullName = $"{Major}.{Minor}.{API}-{Letter}"; else FullName =  $"{Major}.{Minor}.{API}";
         }
     }
 }

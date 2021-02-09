@@ -13,41 +13,35 @@ namespace Vigilance.API
 
         public static void MakeGhost(Player player)
         {
-            if (!Ghosts.Contains(player))
-                Ghosts.Add(player);
+            if (!Ghosts.Contains(player)) Ghosts.Add(player);
         }
 
         public static void RemoveGhost(Player player)
         {
-            if (Ghosts.Contains(player))
-                Ghosts.Remove(player);
+            if (Ghosts.Contains(player)) Ghosts.Remove(player);
         }
 
         public static List<Player> GetTargets(Player player)
         {
-            if (!Targets.ContainsKey(player))
-                Targets.Add(player, new List<Player>());
+            if (!Targets.ContainsKey(player)) Targets.Add(player, new List<Player>());
             return Targets[player];
         }
 
         public static void AddTarget(Player player, Player target)
         {
-            if (!Targets.ContainsKey(player))
-                Targets.Add(player, new List<Player>());
+            if (!Targets.ContainsKey(player)) Targets.Add(player, new List<Player>());
             Targets[player].Add(target);
         }
 
         public static void RemoveTarget(Player player, Player target)
         {
-            if (!Targets.ContainsKey(player))
-                Targets.Add(player, new List<Player>());
+            if (!Targets.ContainsKey(player)) Targets.Add(player, new List<Player>());
             Targets[player].Remove(target);
         }
 
         public static void RemoveAllTargets(Player player)
         {
-            if (!Targets.ContainsKey(player))
-                Targets.Add(player, new List<Player>());
+            if (!Targets.ContainsKey(player)) Targets.Add(player, new List<Player>());
             Targets.Remove(player);
         }
 
@@ -63,15 +57,13 @@ namespace Vigilance.API
         public static bool PlayerCannotSee(Player source, int playerId)
         {
             Player myPlayer = Server.PlayerList.GetPlayer(playerId);
-            if (myPlayer == null)
-                return false;
+            if (myPlayer == null) return false;
             return GetTargets(source).Contains(myPlayer);
         }
 
         public static Player GetPlayerOrServer(GameObject gameObject)
         {
-            if (gameObject == null)
-                return null;
+            if (gameObject == null) return null;
             var refHub = ReferenceHub.GetHub(gameObject);
             return refHub.isLocalPlayer ? Server.PlayerList.Local : Server.PlayerList.GetPlayer(gameObject);
         }

@@ -4,14 +4,12 @@ using Vigilance.Enums;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using System.Reflection;
 using Vigilance.API;
 using Scp914;
 using Interactables.Interobjects.DoorUtils;
 using Dissonance.Integrations.MirrorIgnorance;
 using Interactables.Interobjects;
 using Respawning;
-using Vigilance.Utilities;
 
 namespace Vigilance.Extensions
 {
@@ -30,10 +28,10 @@ namespace Vigilance.Extensions
 			Rooms.Clear();
 			var cameras = Map.Cameras;
 			if (cameras == null) return;
-			var cameraCount = cameras.Count;
+			var cameraCount = cameras.Count();
 			for (int i = 0; i < cameraCount; i++)
 			{
-				var camera = cameras[i];
+				var camera = cameras.ToList()[i];
 				var cameraID = camera.GetInstanceID();
 				var cameraType = (Enums.CameraType)cameraID;
 				if (camera != null && camera.gameObject != null)
@@ -64,10 +62,10 @@ namespace Vigilance.Extensions
 			Doors.Clear();
 			var doors = Map.FindObjects<DoorVariant>();
 			if (doors == null) return;
-			var doorCount = doors.Count;
+			var doorCount = doors.Count();
 			for (int i = 0; i < doorCount; i++)
 			{
-				var door = doors[i];
+				var door = doors.ToList()[i];
 				var doorID = door.GetInstanceID();
 				var doorNameTag = door.GetComponent<DoorNametagExtension>();
 				var doorName = doorNameTag == null ? door.name.RemoveBracketsOnEndOfName() : doorNameTag.GetName;
@@ -1279,6 +1277,11 @@ namespace Vigilance.Extensions
 				return ConsoleColor.White;
 		}
 	}
+
+	public static class RoomExtensions
+    {
+
+    }
 }
 
 namespace Vigilance.Extensions.Rpc

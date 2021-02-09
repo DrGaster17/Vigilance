@@ -1,14 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Grenades;
-using Mirror;
 using Respawning;
 using UnityEngine;
 using Vigilance.Enums;
 using Vigilance.Extensions;
 using Object = UnityEngine.Object;
-using RemoteAdmin;
-using MEC;
 using Scp914;
 using LightContainmentZoneDecontamination;
 using System;
@@ -18,25 +14,24 @@ namespace Vigilance.API
 {
 	public static class Map
 	{
-		private static List<Room> _rooms = null;
-
-		public static List<Door> Doors { get; internal set; }
-		public static List<WorkStation> WorkStations => FindObjects<WorkStation>();
-		public static List<Ragdoll> Ragdolls => FindObjects<Ragdoll>();
-		public static List<FlickerableLight> FlickerableLights { get; } = FindObjects<FlickerableLight>();
-		public static List<FlickerableLightController> LightControllers { get; } = FindObjects<FlickerableLightController>();
-		public static List<BlastDoor> BlastDoors { get; } = FindObjects<BlastDoor>();
-		public static List<Camera079> Cameras { get; } = Scp079PlayerScript.allCameras.ToList();
-		public static List<Lift> Lifts { get; } = FindObjects<Lift>();
-		public static List<Pickup> Pickups => FindObjects<Pickup>();
-		public static List<TeslaGate> TeslaGates { get; } = FindObjects<TeslaGate>();
-		public static List<GameObject> PocketDimensionExists => GameObject.FindGameObjectsWithTag("PD_EXIT").ToList();
-		public static List<Generator079> Generators => Generator079.Generators;
-		public static List<Lift.Elevator> Elevators => Lifts.FirstOrDefault().elevators.ToList();
-		public static List<Rid> RoomIDs { get; } = GameObject.FindGameObjectsWithTag("RoomID").Select(h => h.GetComponent<Rid>()).ToList();
-		public static List<RoomInformation> RoomList { get; } = FindObjects<RoomInformation>();
+		public static IEnumerable<Room> Rooms => Utilities.Utils.GetRooms();
+		public static IEnumerable<Door> Doors => DoorExtensions.Doors.Values;
+		public static IEnumerable<WorkStation> WorkStations => FindObjects<WorkStation>();
+		public static IEnumerable<Ragdoll> Ragdolls => FindObjects<Ragdoll>();
+		public static IEnumerable<FlickerableLight> FlickerableLights { get; } = FindObjects<FlickerableLight>();
+		public static IEnumerable<FlickerableLightController> LightControllers { get; } = FindObjects<FlickerableLightController>();
+		public static IEnumerable<BlastDoor> BlastDoors { get; } = FindObjects<BlastDoor>();
+		public static IEnumerable<Camera079> Cameras { get; } = Scp079PlayerScript.allCameras.ToList();
+		public static IEnumerable<Lift> Lifts { get; } = FindObjects<Lift>();
+		public static IEnumerable<Pickup> Pickups => FindObjects<Pickup>();
+		public static IEnumerable<TeslaGate> TeslaGates { get; } = FindObjects<TeslaGate>();
+		public static IEnumerable<GameObject> PocketDimensionExists => GameObject.FindGameObjectsWithTag("PD_EXIT");
+		public static IEnumerable<Generator079> Generators => Generator079.Generators;
+		public static IEnumerable<Lift.Elevator> Elevators => Lifts.FirstOrDefault().elevators;
+		public static IEnumerable<Rid> RoomIDs { get; } = GameObject.FindGameObjectsWithTag("RoomID").Select(h => h.GetComponent<Rid>()).ToList();
+		public static IEnumerable<RoomInformation> RoomList { get; } = FindObjects<RoomInformation>();
+		public static WarheadLeverStatus WarheadLeverStatus { get => NukesitePanel.Networkenabled ? WarheadLeverStatus.Enabled : WarheadLeverStatus.Disabled; set => NukesitePanel.Networkenabled = value == WarheadLeverStatus.Enabled ? true : false; }
 		public static Vector3 PocketDimension { get; } = new Vector3(0f, -1998.5f, 0f);
-		public static int ActivatedGenerators => Generator079.mainGenerator.totalVoltage;
 		public static Generator079 MainGenerator => Generator079.mainGenerator;
 		public static RespawnEffectsController RespawnController => RespawnEffectsController.AllControllers.Where(controller => controller != null).FirstOrDefault();
 		public static SeedSynchronizer SeedSynchronizer { get; } = Server.GameManager?.GetComponent<SeedSynchronizer>();
@@ -47,40 +42,14 @@ namespace Vigilance.API
 		public static AlphaWarheadOutsitePanel OutsitePanel { get; } = OutsitePanelScript.GetComponent<AlphaWarheadOutsitePanel>();
 		public static AlphaWarheadNukesitePanel NukesitePanel { get; } = AlphaWarheadOutsitePanel.nukeside;
 		public static int MapSeed { get; } = SeedSynchronizer.Seed;
-		public static bool TeslaGatesDisabled { get; set; }
-		public static WarheadLeverStatus WarheadLeverStatus { get => NukesitePanel.Networkenabled ? WarheadLeverStatus.Enabled : WarheadLeverStatus.Disabled; set => NukesitePanel.Networkenabled = value == WarheadLeverStatus.Enabled ? true : false; }
-
-		public static List<Room> Rooms
-        {
-			get
-            {
-				try
-				{
-					if (_rooms == null || _rooms.Count < RoomIDs.Count)
-					{
-						_rooms = new List<Room>();
-						_rooms.AddRange(GameObject.FindGameObjectsWithTag("Room").Select(r => new Room(r.name, r, r.transform.position)));
-						_rooms.Add(new Room("Root_*&*Outside Cams", GameObject.Find("Root_*&*Outside Cams"), GameObject.Find("Root_*&*Outside Cams").transform.position));
-						RoomInformation pocket = FindObjects<RoomInformation>().Where(h => h.CurrentRoomType == RoomInformation.RoomType.POCKET).FirstOrDefault();
-						if (pocket != null) _rooms.Add(new Room("PocketDimension", pocket.gameObject, pocket.transform.position));
-					}
-					return _rooms;
-				}
-				catch (Exception e)
-                {
-					Log.Add(nameof(Rooms), e);
-					return new List<Room>();
-                }
-            }
-        }
-	
+		public static int ActivatedGenerators => Generator079.mainGenerator.totalVoltage;
+		public static bool TeslaGatesDisabled { get; set; }	
 
 		public static void Broadcast(string message, int duration, bool mono = false)
 		{
 			try
 			{ 
-				if (string.IsNullOrEmpty(message) || duration < 1)
-					return;
+				if (string.IsNullOrEmpty(message) || duration < 1) return;
 				foreach (Player player in Server.PlayerList.Players.Values)
 				{
 					player.Broadcast(message, duration, mono);
@@ -95,28 +64,16 @@ namespace Vigilance.API
 		public static void Broadcast(Broadcast bc) => Broadcast(bc.Message, bc.Duration, bc.Monospaced);
 
 		public static void ClearBroadcasts()
-		{
-			try
-			{
-				foreach (Player player in Server.PlayerList.Players.Values)
-				{
-					player.ClearBroadcasts();
-				}
-			}
-			catch (Exception e)
-            {
-				Log.Add(nameof(ClearBroadcasts), e);
-            }
-		}
+        {
+			foreach (Player player in Server.Players) player.ClearBroadcasts();
+        }
 
 		public static void ShowHint(string message, int duration)
         {
 			try
 			{
-				if (string.IsNullOrEmpty(message) || duration < 1)
-					return;
-				foreach (Player player in Server.PlayerList.Players.Values)
-					player.ShowHint(message, duration);
+				if (string.IsNullOrEmpty(message) || duration < 1) return;
+				foreach (Player player in Server.PlayerList.Players.Values) player.ShowHint(message, duration);
 			}
 			catch (Exception e)
             {
@@ -152,8 +109,7 @@ namespace Vigilance.API
 					return rid;
             }
 			RoomInformation info = GetRoomInformation(name);
-			if (info != null)
-				return info.GetComponent<Rid>();
+			if (info != null) return info.GetComponent<Rid>();
 			return null;
         }
 
@@ -187,8 +143,7 @@ namespace Vigilance.API
 		public static RoomInformation GetRoomInformation(RoomType type)
         {
 			Room room = GetRoom(type);
-			if (room != null)
-				return room.RoomInformation;
+			if (room != null) return room.RoomInformation;
 			return null;
 		}
 
@@ -214,8 +169,8 @@ namespace Vigilance.API
 				if (Physics.RaycastNonAlloc(ray, Utilities.Utils.RaycastsCache, 10, 1 << 0, QueryTriggerInteraction.Ignore) == 1)
 					room = Utilities.Utils.RaycastsCache[0].collider.gameObject.GetComponentInParent<Room>();
 			}
-			if (room == null && rooms.Count != 0)
-				room = rooms[rooms.Count - 1];
+			if (room == null && rooms.Count() != 0)
+				room = rooms.ToList()[rooms.Count() - 1];
 			return room;
 		}
 
@@ -278,13 +233,13 @@ namespace Vigilance.API
 			return Object.FindObjectOfType<T>();
         }
 
-		public static List<T> FindObjects<T>() where T : Component
+		public static IEnumerable<T> FindObjects<T>() where T : Component
         {
-			return Object.FindObjectsOfType<T>().ToList();
+			return Object.FindObjectsOfType<T>();
         }
 
 		public static Vector3 GetRandomSpawnpoint(RoleType role) => PlayerManager.localPlayer.GetComponent<SpawnpointManager>().GetRandomPosition(role).transform.position;
-		public static void TurnOffLights(float time = 9999f, bool onlyHeavy = false) => Generators[0].ServerOvercharge(time, onlyHeavy);
+		public static void TurnOffLights(float time = 9999f, bool onlyHeavy = false) => Generators.ToList()[0].ServerOvercharge(time, onlyHeavy);
 		public static Pickup SpawnItem(ItemType itemType, Vector3 position, Quaternion rotation = default, int sight = 0, int barrel = 0, int other = 0) => Server.LocalHub.inventory.SetPickup(itemType, -4.6566467E+11f, position, rotation, sight, barrel, other);
 
 		public static class Warhead
@@ -309,16 +264,16 @@ namespace Vigilance.API
 		public static class Scp914
 		{
 			public static Scp914Machine Singleton => Scp914Machine.singleton;
-			public static List<Player> Players => Singleton.players.GetPlayers();
-			public static List<Pickup> Items => Singleton.items;
+			public static IEnumerable<Player> Players => Singleton.players.GetPlayers();
+			public static IEnumerable<Pickup> Items => Singleton.items;
 			public static Vector3 Position => Singleton.transform.position;
 			public static Scp914Knob KnobState { get => Singleton.knobState; set => Singleton.SetKnobState(value); }
 			public static Scp914Mode Mode => Singleton.configMode.Value;
-			public static List<Scp914Recipe> Recipes { get => Singleton.recipes.ToList(); set => Singleton.recipes = value.ToArray(); }
+			public static IEnumerable<Scp914Recipe> Recipes { get => Singleton.recipes.ToList(); set => Singleton.recipes = value.ToArray(); }
 			public static Dictionary<ItemType, Dictionary<Scp914Knob, ItemType[]>> RecipesDict { get => Singleton.recipesDict; set => Singleton.recipesDict = value; }
 
 			public static void Process() => Singleton.MoveObjects(Items, Singleton.players);
-			public static void Process(List<Pickup> items, List<Player> players) => Singleton.MoveObjects(items, players.Select(h => h.Hub.characterClassManager).ToList());
+			public static void Process(IEnumerable<Pickup> items, IEnumerable<Player> players) => Singleton.MoveObjects(items, players.Select(h => h.Hub.characterClassManager).ToList());
 		}
 
 		public static class Intercom
@@ -337,25 +292,20 @@ namespace Vigilance.API
 
 			public static void SetSpeaker(Player player)
             {
-				if (player == null || player.GameObject == null)
-					return;
+				if (player == null || player.GameObject == null) return;
 				global::Intercom.host.RequestTransmission(player.GameObject);
             }
 
 			public static void SetText(string txt)
             {
-				if (string.IsNullOrEmpty(txt))
-					return;
+				if (string.IsNullOrEmpty(txt)) return;
 				global::Intercom.host.CustomContent = txt;
 				global::Intercom.host.UpdateText();
             }
 
 			public static void SetContent(global::Intercom singleton, global::Intercom.State state, string content)
 			{
-				if (state == global::Intercom.State.Restarting)
-					content = content.Replace("%remaining%", Mathf.CeilToInt(singleton.remainingCooldown).ToString());
-				else
-					content = content.Replace("%time%", Mathf.CeilToInt(singleton.speechRemainingTime).ToString());
+				if (state == global::Intercom.State.Restarting) content = content.Replace("%remaining%", Mathf.CeilToInt(singleton.remainingCooldown).ToString()); else content = content.Replace("%time%", Mathf.CeilToInt(singleton.speechRemainingTime).ToString());
 				if (!string.IsNullOrEmpty(content))
 				{
 					singleton.Network_intercomText = content;
@@ -373,14 +323,10 @@ namespace Vigilance.API
 			public static DecontaminationController Controller { get; } = DecontaminationController.Singleton;
 			public static bool HasBegun => Controller._decontaminationBegun;
 			public static bool IsDecontaminated => Controller._stopUpdating;
-			public static AudioSource AudioSource => Controller.AnnouncementAudioSource;
-			public static double RoundStartTime => Controller.NetworkRoundStartTime;
 			public static bool IsDisabled { get => Controller.disableDecontamination; set => Controller.disableDecontamination = value; }
+			public static double RoundStartTime => Controller.NetworkRoundStartTime;
 
-			public static void Decontaminate()
-            {
-				Controller.FinishDecontamination();
-			}
+			public static void Decontaminate() => Controller?.FinishDecontamination();
 		}
 	}
 }

@@ -71,20 +71,13 @@ namespace Vigilance.API
 
         public bool CheckPermission(Item item, Player player)
         {
-            if (player.PlayerLock || IsLocked)
-                return false;
-            if (player.BypassMode)
-                return true;
-            if (item == null)
-                return player.IsSCP && (_door.RequiredPermissions.RequiredPermissions.HasFlagFast(KeycardPermissions.ScpOverride) || _door.RequiredPermissions.RequiredPermissions == KeycardPermissions.ScpOverride);
-            if (_door.RequiredPermissions.RequiredPermissions == KeycardPermissions.None)
-                return true;
+            if (player.PlayerLock || IsLocked) return false;
+            if (player.BypassMode) return true;
+            if (item == null) return player.IsSCP && (_door.RequiredPermissions.RequiredPermissions.HasFlagFast(KeycardPermissions.ScpOverride) || _door.RequiredPermissions.RequiredPermissions == KeycardPermissions.ScpOverride);
+            if (_door.RequiredPermissions.RequiredPermissions == KeycardPermissions.None) return true;
             KeycardPermissions keycardPermissions = DoorPermissionUtils.TranslateObsoletePermissions(item.permissions);
-            if (!_door.RequiredPermissions.RequireAll)
-                return (keycardPermissions & _door.RequiredPermissions.RequiredPermissions) > KeycardPermissions.None;
-            foreach (KeycardPermissions perm in item.permissions.GetPermissions())
-                if (_door.RequiredPermissions.RequiredPermissions.HasFlagFast(perm) || _door.RequiredPermissions.RequiredPermissions == perm)
-                    return true;
+            if (!_door.RequiredPermissions.RequireAll) return (keycardPermissions & _door.RequiredPermissions.RequiredPermissions) > KeycardPermissions.None;
+            foreach (KeycardPermissions perm in item.permissions.GetPermissions()) if (_door.RequiredPermissions.RequiredPermissions.HasFlagFast(perm) || _door.RequiredPermissions.RequiredPermissions == perm) return true;
             return (keycardPermissions & _door.RequiredPermissions.RequiredPermissions) == _door.RequiredPermissions.RequiredPermissions;
         }
 

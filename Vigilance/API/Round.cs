@@ -20,14 +20,14 @@ namespace Vigilance.API
         public static RoundInfo Info { get => _info == null ? _info = new RoundInfo() : _info; }
 
         public static void Start() => CharacterClassManager.ForceRoundStart();
+        public static void Restart() => Utilities.Utils.LocalStats.Roundrestart();
+
         public static void End()
         {
             RoundLock = false;
             LobbyLock = false;
             RoundSummary.singleton.ForceEnd();
         }
-
-        public static void Restart() => Utilities.Utils.LocalStats.Roundrestart();
 
         public static void AddUnit(string unit, SpawnableTeamType teamType = SpawnableTeamType.NineTailedFox)
         {

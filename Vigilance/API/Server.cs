@@ -12,16 +12,17 @@ namespace Vigilance.API
 {
     public static class Server
     {
-        public static string Version => GameCore.Version.VersionString;
         public static GameObject GameManager => GameObject.Find("GameManager");
         public static ReferenceHub LocalHub => ReferenceHub.LocalHub;
         public static IEnumerable<Player> Players => PlayerList.Players.Values;
+
         public static int Port => ServerStatic.ServerPortSet ? ServerStatic.ServerPort : 7777;
         public static int MaxPlayers => ConfigFile.ServerConfig.GetInt("max_players", 20);
         public static bool RoundLock { get => RoundSummary.RoundLock; set => RoundSummary.RoundLock = value; }
         public static bool LobbyLock { get => RoundStart.LobbyLock; set => RoundStart.LobbyLock = value; }
         public static string Name { get => ServerConsole._serverName; set => ServerConsole._serverName = value; }
         public static string IpAddress { get => ServerConsole.Ip; set => ServerConsole.Ip = value; }
+        public static string Version => GameCore.Version.VersionString;
 
         public static void Restart(bool safeRestart = true)
         {

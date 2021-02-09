@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Reflection;
 using Harmony;
 using Version = Vigilance.API.Version;
-using Vigilance.Extensions;
-using Vigilance.API;
 using Vigilance.Utilities;
 
 namespace Vigilance
 {
     public static class PluginManager
     {
-        public static Version Version { get; } = new Version(5, 5, 5, "", false);
+        public static Version Version { get; } = new Version(5, 5, 6, "", false);
         public static List<string> CompatibleVersions = new List<string>() { "10.2.0", "10.2.1" };
         public static Dictionary<string, Assembly> Assemblies { get; set; }
         public static Dictionary<string, Plugin> Plugins { get; set; }

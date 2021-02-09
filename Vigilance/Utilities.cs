@@ -17,70 +17,28 @@ using Mirror;
 using System.Reflection;
 using Object = UnityEngine.Object;
 using RemoteAdmin;
+using Interactables.Interobjects.DoorUtils;
 
 namespace Vigilance.Utilities
 {
     public static class Utils
     {
-        public static List<CoroutineHandle> ActiveCoroutines = new List<CoroutineHandle>();
-        public static System.Random Random = new System.Random();
-
         private static Player _localPlayer;
         private static ReferenceHub _localHub;
         private static PlayerStats _pStats;
         private static CharacterClassManager _ccm;
         private static BanPlayer _banHandler;
+        private static List<Room> _rooms = null;
+
         public static readonly RaycastHit[] RaycastsCache = new RaycastHit[1];
+        public static List<CoroutineHandle> ActiveCoroutines = new List<CoroutineHandle>();
+        public static System.Random Random = new System.Random();
 
-        public static Player LocalPlayer
-        {
-            get
-            {
-                if (_localPlayer == null)
-                    _localPlayer = new Player(LocalHub);
-                return _localPlayer;
-            }
-        }
-
-        public static ReferenceHub LocalHub
-        {
-            get
-            {
-                if (_localHub == null)
-                    _localHub = PlayerManager.localPlayer.GetComponent<ReferenceHub>();
-                return _localHub;
-            }
-        }
-
-        public static PlayerStats LocalStats
-        {
-            get
-            {
-                if (_pStats == null)
-                    _pStats = PlayerManager.localPlayer.GetComponent<PlayerStats>();
-                return _pStats;
-            }
-        }
-
-        public static CharacterClassManager LocalCcm
-        {
-            get
-            {
-                if (_ccm == null)
-                    _ccm = PlayerManager.localPlayer.GetComponent<CharacterClassManager>();
-                return _ccm;
-            }
-        }
-
-        public static BanPlayer LocalBan
-        {
-            get
-            {
-                if (_banHandler == null)
-                    _banHandler = PlayerManager.localPlayer.GetComponent<BanPlayer>();
-                return _banHandler;
-            }
-        }
+        public static Player LocalPlayer => _localPlayer == null ? (_localPlayer = new Player(LocalHub)) : _localPlayer;
+        public static ReferenceHub LocalHub => _localHub == null ? (_localHub = PlayerManager.localPlayer.GetComponent<ReferenceHub>()) : _localHub;
+        public static PlayerStats LocalStats => _pStats == null ? (_pStats = LocalHub.GetComponent<PlayerStats>()) : _pStats;
+        public static CharacterClassManager LocalCcm => _ccm == null ? (_ccm = LocalHub.GetComponent<CharacterClassManager>()) : _ccm;
+        public static BanPlayer LocalBan => _banHandler == null ? (_banHandler = LocalHub.GetComponent<BanPlayer>()) : _banHandler;
 
         public static void InitPluginManager()
         {
@@ -104,6 +62,24 @@ namespace Vigilance.Utilities
             CustomNetworkManager.Modded = ConfigManager.MarkAsModded;
             CommandSystem.Commands.BuildInfoCommand.ModDescription = $"Vigilance v{PluginManager.Version} - a simple plugin loader and a little API for SCP: Secret Laboratory.";
         }
+
+        public static void InitRooms()
+        {
+            try
+            {
+                if (_rooms != null) _rooms.Clear(); else { _rooms = new List<Room>(); }
+                _rooms.AddRange(GameObject.FindGameObjectsWithTag("Room").Select(r => new Room(r.name, r, r.transform.position)));
+                _rooms.Add(new Room("Root_*&*Outside Cams", GameObject.Find("Root_*&*Outside Cams"), GameObject.Find("Root_*&*Outside Cams").transform.position));
+                RoomInformation pocket = Map.FindObjects<RoomInformation>().Where(h => h.CurrentRoomType == RoomInformation.RoomType.POCKET).FirstOrDefault();
+                if (pocket != null) _rooms.Add(new Room("PocketDimension", pocket.gameObject, pocket.transform.position));
+            }
+            catch (Exception e)
+            {
+                Log.Add(nameof(Utils.InitRooms), e);
+            }
+        }
+
+        public static List<Room> GetRooms() => _rooms;
 
         public static Grenade SpawnGrenade(Player player, GrenadeType grenadeType)
         {
@@ -172,20 +148,6 @@ namespace Vigilance.Utilities
             {
                 rm.SpawnRagdoll(rm.transform.position + Vector3.up * 5, Quaternion.identity, Vector3.zero, role, new PlayerStats.HitInfo(1000f, "WORLD", DamageTypes.Falldown, 0), false, "SCP-343", "SCP-343", 0);
                 yield return Timing.WaitForSeconds(0.15f);
-            }
-        }
-
-        public static void RefreshDoors()
-        {
-            try
-            {
-                if (Map.Doors != null) Map.Doors.Clear();
-                DoorExtensions.SetInfo();
-                Map.Doors = DoorExtensions.Doors.Values.ToList();
-            }
-            catch (Exception e)
-            {
-                Log.Add("MAP", e);
             }
         }
 
@@ -1195,7 +1157,7 @@ namespace Vigilance.Utilities
                     foreach (BreakableWindow window in UnityEngine.Object.FindObjectsOfType<BreakableWindow>())
                         window.health = ConfigManager.WindowHealth == -1f ? float.MaxValue : ConfigManager.WindowHealth;
                 CameraExtensions.SetInfo();
-                Utils.RefreshDoors();
+                DoorExtensions.SetInfo();
             }
             catch (Exception e)
             {
@@ -1211,7 +1173,6 @@ namespace Vigilance.Utilities
                 Round.CurrentState = RoundState.Restarting;
                 if (ConfigManager.ShouldReloadConfigsOnRoundRestart)
                     Server.ReloadConfigs();
-                Map.Doors.Clear();
             }
             catch (Exception e)
             {
