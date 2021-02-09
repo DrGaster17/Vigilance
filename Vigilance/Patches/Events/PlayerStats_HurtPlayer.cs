@@ -27,6 +27,7 @@ namespace Vigilance.Patches.Events
 				bool flag2 = false;
 				bool flag3 = go == null;
 				ReferenceHub referenceHub = flag3 ? null : ReferenceHub.GetHub(go);
+
 				if (info.Amount < 0f)
 				{
 					if (flag3)
@@ -39,34 +40,23 @@ namespace Vigilance.Patches.Events
 					}
 				}
 
-				if (__instance._burned.Enabled)
-					info.Amount *= __instance._burned.DamageMult;
-				if (info.Amount > 2.14748365E+09f)
-					info.Amount = 2.14748365E+09f;
-				if (info.GetDamageType().isWeapon && referenceHub.characterClassManager.IsAnyScp() && info.GetDamageType() != DamageTypes.MicroHid)
-					info.Amount *= __instance.weaponManager.weapons[__instance.weaponManager.curWeapon].scpDamageMultiplier;
-				if (flag3)
-					return false;
+				if (__instance._burned.Enabled) info.Amount *= __instance._burned.DamageMult;
+				if (info.Amount > 2.14748365E+09f) info.Amount = 2.14748365E+09f;
+				if (info.GetDamageType().isWeapon && referenceHub.characterClassManager.IsAnyScp() && info.GetDamageType() != DamageTypes.MicroHid) info.Amount *= __instance.weaponManager.weapons[__instance.weaponManager.curWeapon].scpDamageMultiplier;
+				if (flag3) return false;
 				PlayerStats playerStats = referenceHub.playerStats;
 				CharacterClassManager characterClassManager = referenceHub.characterClassManager;
-				if (playerStats == null || characterClassManager == null)
-					return false;
-				if (characterClassManager.GodMode)
-					return false;
-				if (__instance.ccm.CurRole.team == Team.SCP && __instance.ccm.Classes.SafeGet(characterClassManager.CurClass).team == Team.SCP && __instance.ccm != characterClassManager)
-					return false;
-				if (characterClassManager.SpawnProtected && !__instance._allowSPDmg)
-					return false;
+				if (playerStats == null || characterClassManager == null) return false;
+				if (characterClassManager.GodMode) return false;
+				if (__instance.ccm.CurRole.team == Team.SCP && __instance.ccm.Classes.SafeGet(characterClassManager.CurClass).team == Team.SCP && __instance.ccm != characterClassManager) return false;
+				if (characterClassManager.SpawnProtected && !__instance._allowSPDmg) return false;
 				bool flag4 = !noTeamDamage && info.IsPlayer && referenceHub != info.RHub && referenceHub.characterClassManager.Fraction == info.RHub.characterClassManager.Fraction;
-				if (flag4)
-					info.Amount *= PlayerStats.FriendlyFireFactor;
+				if (flag4) info.Amount *= PlayerStats.FriendlyFireFactor;
 				Player myTarget = Server.PlayerList.GetPlayer(referenceHub);
-				Player myPlayer = Server.PlayerList.GetPlayer(__instance.ccm._hub);
-				if (myTarget == null || myPlayer == null)
-					return true;
+				Player myPlayer = info.GetDamageType() == DamageTypes.Grenade ? Server.PlayerList.GetPlayer(info.PlayerId) : Server.PlayerList.GetPlayer(__instance.ccm._hub);
+				if (myTarget == null || myPlayer == null) return true;
 				Vigilance.Utilities.Handling.OnHurt(myTarget, myPlayer, info, true, out info, out bool allow);
-				if (!allow)
-					return false;
+				if (!allow) return false;
 				float health = playerStats.Health;
 				if (__instance.lastHitInfo.Attacker == "ARTIFICIALDEGEN")
 				{
