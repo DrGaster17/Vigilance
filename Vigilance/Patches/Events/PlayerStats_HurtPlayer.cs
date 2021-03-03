@@ -8,6 +8,7 @@ using PlayableScps;
 using PlayableScps.Interfaces;
 using Respawning;
 using Dissonance.Integrations.MirrorIgnorance;
+using CustomPlayerEffects;
 
 namespace Vigilance.Patches.Events
 {
@@ -40,7 +41,15 @@ namespace Vigilance.Patches.Events
 					}
 				}
 
-				if (__instance._burned.Enabled) info.Amount *= __instance._burned.DamageMult;
+				if (referenceHub != null)
+				{
+					Burned effect = referenceHub.playerEffectsController.GetEffect<Burned>();
+					if (effect != null && effect.Enabled)
+					{
+						info.Amount *= effect.DamageMult;
+					}
+				}
+
 				if (info.Amount > 2.14748365E+09f) info.Amount = 2.14748365E+09f;
 				if (info.GetDamageType().isWeapon && referenceHub.characterClassManager.IsAnyScp() && info.GetDamageType() != DamageTypes.MicroHid) info.Amount *= __instance.weaponManager.weapons[__instance.weaponManager.curWeapon].scpDamageMultiplier;
 				if (flag3) return false;
