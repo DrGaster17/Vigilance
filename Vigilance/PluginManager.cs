@@ -9,8 +9,8 @@ namespace Vigilance
 {
     public static class PluginManager
     {
-        public static Version Version { get; } = new Version(5, 5, 7, "", false);
-        public static List<string> CompatibleVersions = new List<string>() { "10.2.0", "10.2.1" };
+        public static Version Version { get; } = new Version(5, 5, 8, "", false);
+        public static List<string> CompatibleVersions = new List<string>() { "10.2.0", "10.2.1", "10.2.2" };
         public static Dictionary<string, Assembly> Assemblies { get; set; }
         public static Dictionary<string, Plugin> Plugins { get; set; }
         public static Dictionary<string, Assembly> Dependencies { get; set; }

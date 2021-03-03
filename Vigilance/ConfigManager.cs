@@ -270,26 +270,26 @@ namespace Vigilance
 		{
 			try
 			{
+				string[] lines;
 				Paths.CheckFile(Paths.ConfigPath);
-				string[] currentLines = File.ReadAllLines(Paths.ConfigPath);
+				lines = File.ReadAllLines(Paths.ConfigPath);
+
 				using (StreamWriter writer = new StreamWriter(Paths.ConfigPath, true))
 				{
-					if (!Paths.ContainsKey(currentLines, key))
+					if (!Paths.ContainsKey(lines, key))
 					{
-						if (!string.IsNullOrEmpty(description) && !currentLines.Contains($"# {description}"))
-							writer.WriteLine($"# {description}");
-						if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(key))
-							writer.WriteLine($"{key}: {value}");
+						if (!string.IsNullOrEmpty(description) && !lines.Contains($"# {description}")) writer.WriteLine($"# {description}");
+						if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(key)) writer.WriteLine($"{key}: {value}");
 						writer.WriteLine("");
 					}
+
 					writer.Flush();
 					writer.Close();
 				}
 			}
 			catch (Exception e)
 			{
-				Log.Add("ConfigManager", "An error ocurred while adding config", LogType.Error);
-				Log.Add("ConfigManager", e);
+				Log.Add("ConfigUtilities", e);
 			}
 		}
 	}
