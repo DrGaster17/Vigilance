@@ -62,7 +62,7 @@ namespace Vigilance.Patches.Events
 				bool flag4 = !noTeamDamage && info.IsPlayer && referenceHub != info.RHub && referenceHub.characterClassManager.Fraction == info.RHub.characterClassManager.Fraction;
 				if (flag4) info.Amount *= PlayerStats.FriendlyFireFactor;
 				Player myTarget = Server.PlayerList.GetPlayer(referenceHub);
-				Player myPlayer = info.GetDamageType() == DamageTypes.Grenade ? Server.PlayerList.GetPlayer(info.PlayerId) : Server.PlayerList.GetPlayer(__instance.ccm._hub);
+				Player myPlayer = CalculateAttacker(__instance, info);
 				if (myTarget == null || myPlayer == null) return true;
 				Vigilance.Utilities.Handling.OnHurt(myTarget, myPlayer, info, true, out info, out bool allow);
 				if (!allow) return false;
@@ -375,5 +375,7 @@ namespace Vigilance.Patches.Events
 				return true;
 			}
 		}
+
+		public static Player CalculateAttacker(PlayerStats stats, PlayerStats.HitInfo info) => info.GetDamageName() == "GRENADE" ? Server.PlayerList.GetPlayer(info.RHub) : Server.PlayerList.GetPlayer(stats.ccm._hub);
 	}
 }
