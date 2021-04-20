@@ -8,8 +8,6 @@ namespace Vigilance
 {
 	public static class ConfigManager
 	{
-		public static bool IsAntiCheatEnabled { get; set; }
-		public static bool IsAntiFlyEnabled { get; set; }
 		public static bool IsServerGuardEnabled { get; set; }
 		public static bool SpawnBlood { get; set; }
 		public static bool SpawnDecal { get; set; }
@@ -97,8 +95,6 @@ namespace Vigilance
 				Log.Add("ConfigManager", e);
 			}
 
-			IsAntiCheatEnabled = PluginManager.Config.GetBool("anticheat_enabled", true);
-			IsAntiFlyEnabled = PluginManager.Config.GetBool("antifly_enabled", true);
 			SpawnBlood = PluginManager.Config.GetBool("enable_blood_spawning", true);
 			SpawnDecal = PluginManager.Config.GetBool("enable_decal_spawning", true);
 			SpawnRagdolls = PluginManager.Config.GetBool("spawn_ragdolls", true);
@@ -204,9 +200,6 @@ namespace Vigilance
 			AddConfig("ServerGuard will kick non-setup Steam accounts if this is set to true.", "steam_block_non_setup_accounts", "false");
 			AddConfig("List of whitelisted IP adresses.", "ip_whitelist", "[]");
 			AddConfig("List of whitelisted UserIDs", "userid_whitelist", "[]");
-		
-			AddConfig("Whether or not should AntiFly kick or kill players for \"cheating\". WARNING! Setting this to false breaks VSR!", "antifly_enabled", "true");
-			AddConfig("Whether or not should AntiCheat teleport players back for \"cheating\". WARNING! Setting this to false breaks VSR!", "anticheat_enabled", "true");
 
 			AddConfig("Whether or not blood should be spawned underneath a player when a player gets hit.", "enable_blood_spawning", "true");
 			AddConfig("Whether or not a black hole should be spawned underneath a player when a player gets taken by SCP-106.", "enable_decal_spawning", "true");
