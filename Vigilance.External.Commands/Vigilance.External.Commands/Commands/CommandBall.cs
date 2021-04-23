@@ -1,0 +1,72 @@
+﻿using Vigilance.Commands;
+using Vigilance.API;
+using Vigilance.API.Enums;
+using Vigilance.External.Extensions;
+using Vigilance.External.Utilities;
+
+namespace Vigilance.External.Commands
+{
+    public class CommandBall : ICommandHandler
+    {
+        public string Command => "ball";
+        public string[] Aliases => new string[] { "ball" };
+        public CommandType[] Environments => new CommandType[] { CommandType.RemoteAdmin, CommandType.ServerConsole };
+        public CommandPermission Permission => CommandPermission.None;
+
+        public string Execute(Player sender, string[] args)
+        {
+            if (args.Length < 1)
+                return "Missing arguments!\nUsage: ball <player/*> (amount)";
+
+            int? amount = null;
+
+            if (args.Length > 1)
+            {
+                if (int.TryParse(args[1], out int i))
+                    amount = i;
+            }
+
+            if (args[0] == "*" || args[0] == "all")
+            {
+                if (!amount.HasValue)
+                {
+                    PlayersList.List.ForEach(x => x.SpawnGrenade(GrenadeType.Scp018));
+
+                    return "Succesfully spawned a grenade at all players.";
+                }
+                else
+                {
+                    CommonUtilities.Repeat(amount.Value, () =>
+                    {
+                        PlayersList.List.ForEach(x => x.SpawnGrenade(GrenadeType.Scp018));
+                    });
+
+                    return $"Succesfully spawned {amount} grenade(s) at all players.";
+                }
+            }
+            else
+            {
+                Player player = args[0].GetPlayer();
+
+                if (player == null)
+                    return "Player not found.";
+
+                if (!amount.HasValue)
+                {
+                    player.SpawnGrenade(GrenadeType.Scp018);
+
+                    return $"Succesfully spawned a grenade at {player.Nick}.";
+                }
+                else
+                {
+                    CommonUtilities.Repeat(amount.Value, () =>
+                    {
+                        player.SpawnGrenade(GrenadeType.Scp018);
+                    });
+
+                    return $"Succesfully spawned {amount} grenade(s) at {player.Nick}.";
+                }
+            }
+        }
+    }
+}
