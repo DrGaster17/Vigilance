@@ -19,6 +19,7 @@ using System.Text.RegularExpressions;
 using CustomPlayerEffects;
 using MapGeneration;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Vigilance.External.Utilities
 {
@@ -877,6 +878,24 @@ namespace Vigilance.External.Utilities
 
     public static class CommonUtilities
     {
+        /// <summary>
+        /// Measures the amount of miliseconds needed for a method to complete.
+        /// </summary>
+        /// <param name="method">The <see cref="Action"/> (method) to measure.</param>
+        /// <returns>The amount of miliseconds elapsed.</returns>
+        public static long MeasureMethod(Action method)
+        {
+            Stopwatch watch = new Stopwatch();
+
+            watch.Start();
+
+            method();
+
+            watch.Stop();
+
+            return watch.ElapsedMilliseconds;
+        }
+
         public static void DoUntilTrue(Func<bool> func, Action act)
         {
             for (int i = 0; i > 0;)
@@ -966,7 +985,7 @@ namespace Vigilance.External.Utilities
         /// <param name="input">A <see cref="string"/> representating the array to convert.</param>
         /// <param name="separator">The <see cref="char"/> to split the array by.</param>
         /// <param name="result">The converted <see cref="Player"/> <see cref="Array"/></param>
-        /// <returns><see cref="true"/> if input was converted succesfully, otherwise false.</returns>
+        /// <returns>true if input was converted succesfully, otherwise false.</returns>
         public static bool ParsePlayerArray(string input, char separator, out Player[] result)
         {
             if (string.IsNullOrEmpty(input))
