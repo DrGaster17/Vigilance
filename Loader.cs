@@ -9,6 +9,8 @@ namespace Vigilance.API.Integrations
 {
     public abstract class Integration
     {
+		public float MaxTimeout { get; set; } = 45f;
+		
 		public string SCPSL_Data => Application.dataPath;
 		public string AppData => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 		public string LabPath => GetSlFolder();
@@ -19,10 +21,10 @@ namespace Vigilance.API.Integrations
 		public string ConfigsPath => $"{LabPath}/Configs/{Port}";
 
 		public string VigilanceFile => $"{Vigilance}/Vigilance.dll";
-		public string VigilanceExtensionsFile => $"{Vigilance}/Vigilance.External.Extensions.dll";
-		public string VigilanceUtilitiesFile => $"{Vigilance}/Vigilance.External.Utilities.dll";
-		public string VigilancePatchesFile => $"{Vigilance}/Vigilance.External.Patching.dll";
-		public string VigilanceDiscordFile => $"{Vigilance}/Vigilance.External.Discord.dll";
+		public string VigilanceExtensionsFile => $"{Vigilance}/Vigilance.Extensions.dll";
+		public string VigilanceUtilitiesFile => $"{Vigilance}/Vigilance.Utilities.dll";
+		public string VigilancePatchesFile => $"{Vigilance}/Vigilance.Patching.dll";
+		public string VigilanceDiscordFile => $"{Vigilance}/Vigilance.Discord.dll";
 
 		public string Dependencies => $"{Vigilance}/Dependencies";
 		public string HarmonyFile => $"{Dependencies}/0Harmony.dll";
@@ -43,17 +45,10 @@ namespace Vigilance.API.Integrations
 
         public bool TryLoad(out string error)
         {
-			Log($"Server Port: {Port}", false, true);
-			Log($"Vigilance Path: {VigilanceFile}", false, true);
-			Log($"Vigilance Extensions Path: {VigilanceExtensionsFile}", false, true);
-			Log($"Vigilance Utilities Path: {VigilanceUtilitiesFile}", false, true);
-			Log($"Vigilance Patches Path: {VigilancePatchesFile}", false, true);
-			Log($"Vigilance Discord Path: {VigilanceDiscordFile}", false, true);
-
             if (!File.Exists(VigilanceUtilitiesFile))
             {
-                Log($"Could not find \"Vigilance.External.Utilities.dll\"! Skipping the loading process ..", true, false);
-                error = "Vigilance.External.Utilities.dll not found.";
+                Log($"Could not find \"Vigilance.Utilities.dll\"! Skipping the loading process ..", true, false);
+                error = "Vigilance.Utilities.dll not found.";
                 return false;
             }
 
@@ -61,23 +56,24 @@ namespace Vigilance.API.Integrations
 
             if (utilities != null)
             {
-                Log($"Succesfully loaded Vigilance.External.Utilities!");
+                Log($"Succesfully loaded Vigilance.Utilities!");
                 LoadedAssemblies.Add(utilities);
             }
             else
             {
-                Log($"Vigilance.External.Utilites could not be loaded, skipping the loading process ..", true);
-                error = "Vigilance.External.Utilites could not be loaded.";
+                Log($"Vigilance.Utilites could not be loaded, skipping the loading process ..", true);
+                error = "Vigilance.Utilites could not be loaded.";
                 return false;
             }
 
             try
             {
-                utilities.GetType("Vigilance.External.Utilities.Directories")?.GetMethod("Startup")?.Invoke(null, null);
+                utilities.GetType("Vigilance.Utilities.Directories")?.GetMethod("Startup")?.Invoke(null, null);
+				Log($"Succesfully invoked the Startup method.", false, true);
             }
             catch (Exception e)
             {
-                Log("An error occured while executing the \"Vigilance.External.Utilities.Directories.Startup\" method.", true, false);
+                Log("An error occured while executing the \"Vigilance.Utilities.Directories.Startup\" method.", true, false);
                 Log(e, true);
                 error = e.ToString();
                 return false;
@@ -85,15 +81,15 @@ namespace Vigilance.API.Integrations
 
             if (!File.Exists(VigilancePatchesFile))
             {
-                Log($"Could not find \"Vigilance.External.Patching.dll\"! Skipping the loading process ..", true, false);
-                error = "Vigilance.External.Patching.dll not found.";
+                Log($"Could not find \"Vigilance.Patching.dll\"! Skipping the loading process ..", true, false);
+                error = "Vigilance.Patching.dll not found.";
                 return false;
             }
 
             if (!File.Exists(VigilanceExtensionsFile))
             {
-                Log($"Could not find \"Vigilance.External.Extensions.dll\"! Skipping the loading process ..", true, false);
-                error = "Vigilance.External.Extensions.dll not found.";
+                Log($"Could not find \"Vigilance.Extensions.dll\"! Skipping the loading process ..", true, false);
+                error = "Vigilance.Extensions.dll not found.";
                 return false;
             }
 
@@ -120,8 +116,8 @@ namespace Vigilance.API.Integrations
 
             if (!File.Exists(Yaml))
             {
-                Log($"Could not find \"Vigilance.External.Patching.dll\"! Skipping the loading process ..", true, false);
-                error = "Vigilance.External.Patching.dll not found.";
+                Log($"Could not find \"YamlDotNet.dll\"! Skipping the loading process ..", true, false);
+                error = "YamlDotNet.dll not found.";
                 return false;
             }
 
@@ -131,7 +127,6 @@ namespace Vigilance.API.Integrations
             Assembly harmonyAssembly = Assembly.LoadFrom(HarmonyFile);
             Assembly newtonsoft = Assembly.LoadFrom(NewtonsoftJson);
             Assembly yamlDotNet = Assembly.LoadFrom(Yaml);
-			
 			Assembly discord = null;
 			
 			if (File.Exists(VigilanceDiscordFile))
@@ -139,31 +134,31 @@ namespace Vigilance.API.Integrations
 
             if (patcher != null)
             {
-                Log($"Succesfully loaded Vigilance.External.Patching!");
+                Log($"Succesfully loaded Vigilance.Patching!");
                 LoadedAssemblies.Add(patcher);
             }
             else
             {
-                Log($"Vigilance.External.Patching could not be loaded, skipping the loading process ..", true);
-                error = "Vigilance.External.Patching could not be loaded.";
+                Log($"Vigilance.Patching could not be loaded, skipping the loading process ..", true);
+                error = "Vigilance.Patching could not be loaded.";
                 return false;
             }
 
             if (extensions != null)
             {
-                Log($"Succesfully loaded Vigilance.External.Extensions!");
+                Log($"Succesfully loaded Vigilance.Extensions!");
                 LoadedAssemblies.Add(extensions);
             }
             else
             {
-                Log($"Vigilance.External.Extensions could not be loaded, skipping the loading process ..", true);
-                error = "Vigilance.External.Extensions could not be loaded.";
+                Log($"Vigilance.Extensions could not be loaded, skipping the loading process ..", true);
+                error = "Vigilance.Extensions could not be loaded.";
                 return false;
             }
 			
 			if (discord != null)
 			{
-				Log($"Succesfully loaded Vigilance.External.Discord!");
+				Log($"Succesfully loaded Vigilance.Discord!");
 				LoadedAssemblies.Add(discord);
 			}
 
