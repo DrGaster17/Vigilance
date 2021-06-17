@@ -13,3 +13,6 @@ Vigilance is a easy-to-use plugin loader for SCP: Secret Laboratory. It offers a
 
 **For plugin developers**:
  * [API Documentation](https://github.com/VirtuelDevelopment/Vigilance/wiki/API-Docs)
+
+## Discord
+![Chat](https://discordapp.com/api/guilds/849742333183655956/widget.png?style=banner2)
