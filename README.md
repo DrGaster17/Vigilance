@@ -14,7 +14,7 @@ Polaris is a easy-to-use plugin loader for SCP: Secret Laboratory. It offers a r
 **For plugin developers**:
  * [API Documentation](https://github.com/VirtuelDevelopment/Polaris/wiki/API-Docs)
 
-**Why "Polaris"?
+**Why "Polaris"?**
  * Well, first of all - it sounds **MUCH** better than saying "Vigilance" all the time.
  * Now - it's from AMD's Polaris GPU architecture.
  * I **really** like it.
